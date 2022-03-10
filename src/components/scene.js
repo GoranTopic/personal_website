@@ -1,12 +1,11 @@
 import { Color, Scene, Fog } from 'three';
 
-function createScene() {
+function createScene(){
+
 		const scene = new Scene();
-		// with color blue
-		//scene.background = new Color( 'white' );
-		// add fog
+		scene.background = new Color( 0xa0a0a0 );
 		scene.fog = new Fog( 0xa0a0a0, 200, 1000 );
-		return scene;
+		return scene
 }
 
-export { createScene };
+export { createScene }

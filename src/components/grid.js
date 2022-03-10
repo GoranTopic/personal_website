@@ -1,14 +1,10 @@
-import { GridHelper } from 'three'
+import { GridHelper } from 'three';
 
 function createGrid(){
-		let size = 2000;
-		let divisions = 20;
-		let colorCenterLine = 0x000000
-		let colorGrid = 0x000000
-		let grid = new GridHelper( size, divisions, colorCenterLine, colorGrid );
+		const grid = new GridHelper( 2000, 20, 0x000000, 0x000000 );
 		grid.material.opacity = 0.2;
 		grid.material.transparent = true;
-		return grid;
+		return  grid;
 }
 
 export { createGrid }

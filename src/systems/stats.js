@@ -1,10 +1,13 @@
 import Stats from 'three/examples/jsm/libs/stats.module'
 
-function addStats( container ){
+function createStats(){
 		// stats
-		let stats = new Stats();
-		// add stats
-		container.appendChild( stats.dom );
+		const stats = new Stats();
+		// make stats update function 
+		stats.tick = () => stats.update()
+		// return 
+		return stats;
 }
 
-export { addStats } 
+export { createStats }
+

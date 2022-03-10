@@ -1,17 +1,14 @@
 import { Mesh, PlaneGeometry, MeshPhongMaterial } from 'three';
 
-function createGround(){
+function createPlane(){
 		let plane_width  = 2000;
 		let plane_height = 2000;
 		// create plane 
 		let plane = new PlaneGeometry( plane_width, plane_height );
 		// create Phong Material config 
-		let material_config = {
-				color : 0x999999,	
-				depthWrite: false 
-		}
+		let material_config = { color: 0x999999, depthWrite: false }
 		// create material 
-		let material = new MeshPhongMaterial( material_config );
+		let material = new MeshPhongMaterial(material_config);
 		// create mesh 
 		const mesh = new Mesh( 
 				plane, 
@@ -24,4 +21,4 @@ function createGround(){
 		return mesh
 }
 
-export { createGround }
+export { createPlane }
