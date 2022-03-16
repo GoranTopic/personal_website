@@ -7,7 +7,7 @@ function createCamera(){
 		let fov = 45; // AKA Field of View
 		let aspect = window.innerWidth / window.innerHeight;
 		let near = 1; // the near clipping plane
-		let far = 1000; // the far clipping plane
+		let far = 10000; // the far clipping plane
 		// create camera
 		let camera = new PerspectiveCamera( fov, aspect, near, far );
 		// set position

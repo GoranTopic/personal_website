@@ -1,4 +1,3 @@
-
 import { AnimationMixer } from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
@@ -6,9 +5,10 @@ const loader = new FBXLoader();
 
 async function loadSambaDancer(){
 		// model
-		const sambaDancer = await loader.loadAsync('./resources/models/Samba Dancing.fbx');
+		const sambaDancer = await loader.loadAsync('../../resources/models/Samba Dancing.fbx');
 
 		const mixer = new AnimationMixer( sambaDancer );
+		console.log(sambaDancer);
 
 		const action = mixer.clipAction( sambaDancer.animations[ 0 ] );
 		action.play();

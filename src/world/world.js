@@ -1,8 +1,9 @@
 import { createCamera } from '../components/camera';
 //import { createCube } from '../components/cube';
 import { createScene } from '../components/scene';
-//import { createLights } from '../../src-bkp/components/lights';
-import { createLights } from '../../src/components/lights';
+import { createLights } from '../components/lights';
+import { loadAstro } from '../components/astro';
+import { loadModel } from '../components/model';
 import { createPlane } from '../components/plane';
 import { createGrid } from '../components/grid';
 //import { createMeshGroup } from '../components/meshGroup';
@@ -63,9 +64,17 @@ class World {
 
 		async init() { // load async objects
 				// load ancer
-				const dancer = await loadSambaDancer();
-				scene.add(dancer);
-				loop.add(dancer);
+				//const dancer = await loadSambaDancer();
+				//scene.add(dancer);
+				//loop.add(dancer);
+				//const astro = await loadAstro();
+				//scene.add(astro);
+				//loop.add(astro);
+
+				const model = await loadModel();
+				//console.log("model:", model);
+				scene.add(model);
+				loop.add(model);
 		}
 		
 		// start the loop
@@ -75,9 +84,9 @@ class World {
 		stop = () => loop.stop()
 
 		// render the world
-		render(){
+		render = () =>
 				renderer.render(scene, camera);
-		}
+
 }
 
 export { World };
