@@ -1,65 +1,31 @@
 import { Color, Mesh, AnimationMixer, TextureLoader, MathUtils, Vector3,
-		MeshStandardMaterial, MeshPhongMaterial, BackSide } from 'three';
+		Quaternion, MeshStandardMaterial, MeshPhongMaterial, BackSide } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+
+import { KeyboardInputController } from '../systems/imputs';
+import { movement } from '../systems/movement/movment';
 
 const loader = new FBXLoader();
 const textLoader = new TextureLoader();
 
 
-class KeyboardInputController{
-		constructor(){
-				this.inputs = {
-						forward: false,
-						backward: false,
-						left: false,
-						right: false,
-						space: false,
-						shift: false,
-				}
-				document.addEventListener('keydown', e => this.onKeyChange(e, true), false);
-				document.addEventListener('keyup', e => this.onKeyChange(e, false), false);
-		}
-
-		onKeyChange = (event, isDown) => {
-				switch (event.keyCode){
-						case 87: // w 
-								this.inputs.forward = isDown? true : false;
-								break;
-						case 65: // a
-								this.inputs.left =  isDown? true : false;
-								break;
-						case 68: // d 
-								this.inputs.right = isDown? true : false;
-								break;
-						case 83: // s 
-								this.inputs.backward = isDown? true: false;
-								break;
-						case 32: // space 
-								this.inputs.space = isDown? true: false;
-								break;
-						case 16: // swift 
-								this.inputs.shift = isDown? true: false;
-								break;
-				}
-		}
-		getInputs = () => this.inputs;
-}
-
-
 async function loadModel(){
-		// model
+		/* model
+		 * The mode has some key component,
+		 * - the state machine that handles the state of the object.
+		 * - the animation mixed which is stored to each state 
+		 * - the input controler which check if there are keybord input 
+		 *		and passes it to the state machince to change the state
+		 * - the mover wich moves the objec on each state.
+		 * */
+
 		const data = await loader.loadAsync('../../resources/Alien_Helmet.fbx');
-
-		//console.log("astro!", data);
+		// make animation mixer
+		
 		const mixer = new AnimationMixer( data );
-
-		// make input controller
-		const controller = new KeyboardInputController();
-
-		// choose animation 
-		const actions = {};
 		// get the actions to the actions
+		const actions = {};
 		const animation_names = [ 'runningjump', 'runhold', 'walk', 'run', 'punch',
 				"clapping", "jump", "swimming", "idlehold", "death", "sitting", 
 				"swordslash", "idle", "standing" ]
@@ -71,18 +37,18 @@ async function loadModel(){
 				)
 		);
 
-		// make shadow
-		if(data.traverse)
-				data.traverse( child => {
-						if( child.isMesh ){
-								child.castShadow = true;
-								child.receiveShadow = true;
-						}
-				});
+		// make input controller
+		const controller = new KeyboardInputController();
+
+		// mover component 
+		const mover = new movement({
+				model: data,
+		});
 
 
+		// color the model
 		data.traverse(
-				child => { // color model 
+				child => { // color me model 
 						if (child instanceof Mesh) {
 								const material = child.material.map( m => { 
 										if(m.name === 'Main') m.color = new Color('white');
@@ -103,37 +69,20 @@ async function loadModel(){
 						}
 				});
 
-		// scale n' tweaks
-		let scale = 0.8;
-		data.scale.set(scale, scale, scale);
-		data.position.set(0, 0, 0)
-
-		// how much to turn when you run
-		const radiansPerSecondRun = MathUtils.degToRad(30);
-		// how much to turn when walking
-		const radiansPerSecondWalk = MathUtils.degToRad(45);
-		// how much to turn when idle
-		const radiansPerSecondIdle = MathUtils.degToRad(60);
-
-		// idle state configurations 
+		// configure idle State
 		const idleState = {};
 		idleState.name = 'idle';
 		idleState.model = data;
-		idleState.action = actions['idle'];
+		idleState.animation = actions['idle'];
 		idleState.condition =
-				inputs => ( 
+				inputs => ( //  
 						inputs.forward === false 
-						|| inputs.forward === false
+						&& inputs.backward === false
 				);
 		idleState.enter = () => {};
-		idleState.update = (delta, inputs, model) => {
-				if(inputs.left && inputs.right) return;
-				if(inputs.left)
-						model.rotation.y += radiansPerSecondIdle * delta;
-				else if(inputs.right)
-						model.rotation.y -= radiansPerSecondIdle * delta;
-		};
+		idleState.update = (delta, inputs, model) => {};
 		idleState.exit = () => {};
+		// to states
 		idleState.to = [ { 
 				state: 'walk',
 				callback: ()=> {}, 
@@ -141,6 +90,7 @@ async function loadModel(){
 				state: 'run',
 				callback: ()=> {}, 
 		}];
+		// from idle states
 		idleState.from = [{
 				state: 'walk',
 				callback: () => {},
@@ -149,21 +99,11 @@ async function loadModel(){
 				callback: () => {},
 		}];
 
-		// I don't kow what I am doing 
-		const decceleration = new Vector3(-0.0005, -0.0001, -5.0);
-		const acceleration = new Vector3(1, 0.25, 50.0);
-		const velocity = new Vector3(0, 0, 0);
-		const frameDecceleration = new Vector3(
-				velocity.x * decceleration.x,
-				velocity.y * decceleration.y,
-				velocity.z * decceleration.z
-		);
-
-		// walk state config
+		// Configure Walk State
 		const walkState = {};
 		walkState.name = 'walk';
 		walkState.model = data;
-		walkState.action = actions['walk'];
+		walkState.animation = actions['walk'];
 		walkState.condition = 
 				inputs => ( 
 						(inputs.forward === true ||
@@ -171,43 +111,12 @@ async function loadModel(){
 						&& (inputs.shift === false) // shift must be off 
 				);
 		walkState.enter = () => {};
-		walkState.update = (delta, inputs, model) => {
-				
-				// someone help me plz
-				frameDecceleration.multiplyScalar(delta);
-				frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(
-						Math.abs(frameDecceleration.z), Math.abs(velocity.z));
-				
-				// add to the velocity vector, why??
-				velocity.add(frameDecceleration);
-				//local copy of acceleration? 
-				const acc = acceleration.clone();
-				// what is even life
-				// add to velocity
-				velocity.z += acc.z * delta;
-				// foward vector
-				const forward = new Vector3(0, 0, 1);
-				forward.applyQuaternion(model.quaternion);
-				forward.normalize();
-				// sideways ?? wat!?
-				const sideways = new Vector3(1, 0, 0);
-				sideways.applyQuaternion(model.quaternion);
-				sideways.normalize();
-				// this guy does not comment anything
-				sideways.multiplyScalar(velocity.x * delta);
-				forward.multiplyScalar(velocity.z * delta);
-				// ok I know this add it to the model, at least i know that..
-				model.position.add(forward);
-				model.position.add(sideways);
-				
-				console.log("rotation:", model.rotation);
-				if(inputs.left && inputs.right) return;
-				if(inputs.left)
-						model.rotation.y += radiansPerSecondWalk * delta;
-				else if(inputs.right)
-						model.rotation.y -= radiansPerSecondWalk * delta;
-				
-		};
+		walkState.update =
+				(delta, inputs, model) => {
+						// move  foward object
+						console.log("update in state ran");
+						mover.moveFoward(delta);
+				};
 		walkState.exit = () => {};
 		walkState.to = [ { 
 				state: 'run',
@@ -221,11 +130,13 @@ async function loadModel(){
 				callback: () => {},
 		}];
 
+
+		/*
 		// run state config
 		const runState = {}; 
 		runState.name = 'run';
 		runState.model = data;
-		runState.action = actions['run'];
+		runState.animation = actions['run'];
 		// implement condition with shift
 		runState.condition = 
 				inputs => (inputs.forward === true && inputs.shift === true);
@@ -236,7 +147,6 @@ async function loadModel(){
 						model.rotation.y += radiansPerSecondRun * delta;
 				else if(inputs.right)
 						model.rotation.y -= radiansPerSecondRun * delta;
-				
 		};
 		runState.exit = () => {};
 		runState.to =  [{ 
@@ -250,41 +160,71 @@ async function loadModel(){
 				state: 'walk',
 				callback: ()=>{},
 		},];
+		*/
 
-		const states = [ idleState, walkState, runState ]
 		// create  state machine
-		const stateMachine = createFiniteStateMachine(states, 'idle');
+		const stateMachine = createFiniteStateMachine(
+				[ idleState, walkState ], // state to process
+				'idle', // initial state
+				(delta, inputs, model) => {
+						// update the mover
+						mover.update(delta); 
+						// update animation
+						mixer.update(delta);
+				}
+		);
+
 		//console.log("stateMachine", stateMachine);
-		stateMachine.currentState._action.play();
 		stateMachine.print_paths();
 
-		data.tick = delta => { // update function
-				// get keyboard inputs
-				let inputs = controller.getInputs();
-				// update state
-				stateMachine.update(delta, inputs);
-				// update animation
-				mixer.update(delta);
-		}
+
+		/* update function */
+		data.tick = delta =>  
+				/*  this witll call the state machine updater
+						and pass the inputs to it  */
+				stateMachine.update(
+						delta, // pass the delta
+						controller.getInputs(), // pass the input
+				);
+
+
+		/* scale n' tweaks */
+		let scale = 0.8; // scale down 
+		data.scale.set(scale, scale, scale);
+		data.position.set(0, 0, 0)
+
+		// make models have shadows
+		if(data.traverse)
+				data.traverse( child => {
+						if( child.isMesh ){
+								child.castShadow = true;
+								child.receiveShadow = true;
+						}
+				});
+
 		return data;
 }
 
+
+
+
+
 class State{
 		constructor(s){
+				this._paths = [];
 				this._name = s.name;
-				this._action = s.action;
+				this._exit = s.exit;
 				this._enter = s.enter;
 				this._model = s.model;
-				this._exit = s.exit;
-				this._paths = [];
 				this._update = s.update;
+				this._animation = s.animation;
 				this._conditionOfEntry = s.condition;
 		} 
 
-		_updateCallback = (delta, inputs) => 
+		update = (delta, inputs) => // wrapper function for update
 				this._update(delta, inputs, this._model);
 
-		addAdjecentState(state){ 
+		addAdjecentState = state => { 
 				/* save the input required to change
 				 to a given adjecent states */
 				this._paths.push({
@@ -294,7 +234,7 @@ class State{
 				});
 		}
 
-		checkPathCondition(delta, inputs){
+		checkPathConditions = (delta, inputs) => {
 				/* this is the function in every state which 
 				 decied what state to change on a give inpu
 				 since this is call by update() in the game loop it has to be fast */
@@ -303,15 +243,16 @@ class State{
 								return path.state;
 				return null;
 		}
-		
+
 }
 
 class StateMachine {
-		constructor(){
+		constructor(update){
 				this.states = {};
 				this.vertices = {};
 				this.currentState = null;
 				this.previousState = null;
+				this.globalUpdate = null;
 		}
 		
 		print_paths = () => {
@@ -339,16 +280,16 @@ class StateMachine {
 				// if state could not be found, exit
 				if([fromState, toState].some(s => s === undefined))
 						return; // exit
-				// create a vertice to map
-				if(!this.vertices[fromState._name]) 
-						// if vertex is new
-						this.vertices[fromState._name] = {} // add new
-				else if(this.vertices[fromState._name][toState._name]) 
+				// create a vertice to map, if vertex is new
+				if(!this.vertices[fromState._name])  
+						this.vertices[fromState._name] = {}
 						//if vertex already exists
+				else if(this.vertices[fromState._name][toState._name]) 
 						return; 
 				else{
 						// mark new vertex
 						this.vertices[fromState._name][toState._name] = true
+						// add adjacent vetexs
 						fromState.addAdjecentState(toState);
 				}
 		}
@@ -357,7 +298,6 @@ class StateMachine {
 				if(newState === null)
 						return; // passed state is null
 				if(this.currentState._name === newState._name){
-						//console.log("got same state:", newState)
 						// if same state
 						return; // do nothing
 				}
@@ -368,31 +308,42 @@ class StateMachine {
 						return;
 				}
 				// swap states 
-				const previousState = this.currentState;
+				this.previousState = this.currentState
 				this.currentState = newState;
 				// run exit function from the previous state
-				previousState._exit();
+				this.previousState._exit();
 				// stop previous animation 
-				previousState._action.stop()
+				if(this.previousState?._animation)
+						this.previousState._animation.stop()
 				// run enter state function
 				this.currentState._enter();
-				this.currentState._action.play()
+				// play animation 
+				if(this.currentState._animation)
+						this.currentState._animation.play()
 		}
-
+		
 		getAdjecentCurrentStates = () => 
 				this.vertices[this.currentState.name];
 
+		setGlobalUpdate = update => 
+				this.globalUpdate = update;
+		
+
 		update = (delta, inputs) =>  {
-				// get all posible states
+				// run globale update
+				if(this.globalUpdate)
+						this.globalUpdate(delta, inputs);
 				//console.log(this.currentState.checkPathCondition(delta, inputs));
-				this.currentState._updateCallback(delta, inputs);
+				// run the update function in each state
+				this.currentState.update(delta, inputs);
+				// check the condition of the inputs to determine wheter to move state
 				this.changeState(
-						this.currentState.checkPathCondition(delta, inputs)
+						this.currentState.checkPathConditions(delta, inputs)
 				);
 		}
 }
 
-function createFiniteStateMachine(states){
+function createFiniteStateMachine(states, initialState, globalUpdate){
 		// create state machine
 		const machine = new StateMachine();
 		try{ // add states to machine
@@ -407,7 +358,11 @@ function createFiniteStateMachine(states){
 						machine.addVertex(state, state) // add link to self
 				});
 				// initialize
-				machine.initialState('idle');
+				machine.initialState(initialState);
+				// global update
+				machine.setGlobalUpdate(globalUpdate);
+				// play animation in initial state
+				machine.currentState._animation.play();
 		}catch(e){ console.log(e) }
 		// return finite state machine
 		return machine;	
