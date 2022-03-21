@@ -46,27 +46,27 @@ class movement{
 						);
 						*/
 				// deccelerate
-				console.log('frameDecceleration:',this.frameDecceleration);
+				//console.log('frameDecceleration:',this.frameDecceleration);
 				if(this.velocity.z > 0)
 						this.velocity.add(this.decceleration);
 				//console.log("global update ran");
-				console.log('velocity:',this.velocity);
+				//console.log('velocity:',this.velocity);
 				//console.log('acceleration:',this.acceleration);
 		}
 
 		moveFoward = (delta=0, profile=null) => {
 				// add to velocity
-				this.velocity.z += this.acceleration.z * delta;
+				//this.velocity.z += this.acceleration.z * delta;
 				// make forward vector
-				const forward = new Vector3(0, 0, 1);
+				//const forward = new Vector3(0, 0, 1);
 				// move to toward the direction the model is facing
-				forward.applyQuaternion(this.model.quaternion);
+				//forward.applyQuaternion(this.model.quaternion);
 				// normalize??
-				forward.normalize();
+				//forward.normalize();
 				//multiple with the scaler? waht??
-				forward.multiplyScalar(this.velocity.z * delta);
+				//forward.multiplyScalar(this.velocity.z * delta);
 				// move the model	
-				this.model.position.add(forward);
+				//this.model.position.add(forward);
 		}
 
 
