@@ -28,7 +28,7 @@ class State{
 				this._animation?.play()
 				//console.log(this._animation?.play())
 				// check if it has the motion function
-				this._movement && this._movement(this._model, delta);
+				this._movement && this._movement(delta, inputs);
 				// at the end run the update callaback
 				this._update && this._update(delta, inputs, this._model);
 		}
@@ -60,6 +60,7 @@ class FinateStateMachine {
 		 *  it also has itsown update function */
 		constructor(){
 				this._states = [];
+				this._model = null;
 				this._currentState = null;
 				this._previousState = null;
 				this._update = null;
@@ -83,6 +84,9 @@ class FinateStateMachine {
 		setUpdateCallback = update => 
 				this._update = update;
 		
+		/* this sets the model */
+		setModel = model => 
+				this.model = model;
 		
 		/* looks for states in states array */
 		getStateByName = name => 
@@ -149,7 +153,7 @@ class FinateStateMachine {
 		
 		update = (delta, inputs) =>  {
 				// run globale update
-				//this._update && this._update(delta, inputs);
+				this._update && this._update(delta, inputs, this.model);
 				//console.log('this update', this._update);
 				// run the update function in each state
 				this._currentState.update(delta, inputs);
@@ -166,6 +170,8 @@ function createFiniteStateMachine( states, connections,
 		// create state machine
 		const machine = new FinateStateMachine();
 		// add states to machine
+		// add model to state machine
+		machine.setModel(model);
 		// add all state, or nodes
 		states.forEach( state => machine.addState(state) )
 		// add connections

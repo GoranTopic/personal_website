@@ -7,6 +7,7 @@ class movement{
 		constructor({ model, velocity=null, acceleration=null, decceleration=null }){
 				this.model = model;
 				this.velocity = velocity || new Vector3(0, 0, 0);
+				this.rotation = 0;
 				this.max_velocity = new Vector3(0, 0, 0);
 				this.acceleration = acceleration || new Vector3(1, 0.25, 50.0);
 				this.decceleration = decceleration || new Vector3(-0.0005, -0.0001, -5.0);
@@ -15,6 +16,10 @@ class movement{
 						this.velocity.y * this.decceleration.y,
 						this.velocity.z * this.decceleration.z );
 				this.profiles = {};
+
+				this._Q = new Quaternion();
+				this._A = new Vector3();
+				this._R = model.quaternion.clone();
 		}
 
 		setAcceleration = acc => 
@@ -35,38 +40,42 @@ class movement{
 				}
 		}
 
-		update = delta => { 
-				// create from decceleration
-				this.frameDecceleration.multiplyScalar(delta);
-				/*
-				this.frameDecceleration.z = Math.sign(
-						this.frameDecceleration.z) * Math.min(
-								Math.abs(this.frameDecceleration.z), 
-								Math.abs(this.velocity.z)
-						);
-						*/
-				// deccelerate
-				//console.log('frameDecceleration:',this.frameDecceleration);
-				if(this.velocity.z > 0)
-						this.velocity.add(this.decceleration);
-				//console.log("global update ran");
-				//console.log('velocity:',this.velocity);
-				//console.log('acceleration:',this.acceleration);
+		rotate = (delta, inputs) => {
+				this.rotation = 0;
+				let count = 0;
+				if(inputs.forward){
+						this.rotation += 1;
+						count += 1;
+						this.model.rotation.y = Math.PI;
+				}
+				if(inputs.backward){
+						// look backward
+						if(inputs.forward || inputs.left) 
+								this.rotation += 2;
+						count += 1;
+				}
+				if(inputs.left){
+						this.rotation += 1.5;
+						count += 1;
+				}
+				if(inputs.right){
+						this.rotation += 0.5;
+						count += 1;
+				}
+				if(count > 0)
+						this.model.rotation.y = (this.rotation / count) * Math.PI;
 		}
 
-		moveFoward = (delta=0, profile=null) => {
-				// add to velocity
-				//this.velocity.z += this.acceleration.z * delta;
-				// make forward vector
-				//const forward = new Vector3(0, 0, 1);
-				// move to toward the direction the model is facing
-				//forward.applyQuaternion(this.model.quaternion);
-				// normalize??
-				//forward.normalize();
-				//multiple with the scaler? waht??
-				//forward.multiplyScalar(this.velocity.z * delta);
-				// move the model	
-				//this.model.position.add(forward);
+		moveFoward = speed  => (delta, inputs) => {
+				this.rotate(delta, inputs);
+				this.speed = speed || 170
+				this.velocity.setZ(this.speed);
+				this.velocity.setX(this.speed);
+				const forward = new Vector3(0, 0, 1);
+				forward.applyQuaternion(this.model.quaternion);
+				forward.normalize();
+				forward.multiplyScalar(this.velocity.z * delta);
+				this.model.position.add(forward);
 		}
 
 

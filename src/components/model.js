@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 import { State, createFiniteStateMachine } from '../systems/StateMachine';
-import { KeyboardInputController } from '../systems/imputs';
+import { KeyboardInputController } from '../systems/inputs';
 import { movement } from '../systems/movement/movement';
 
 const loader = new FBXLoader();
@@ -76,9 +76,11 @@ async function loadModel(){
 				name: 'idle', 
 				model: data, 
 				condition: inputs => ( 
-						(inputs.forward === false ||
-								inputs.forward === false)
-						&& (inputs.shift === false)),
+						(inputs.forward === false &&
+								inputs.backward === false && 
+								inputs.left === false &&
+								inputs.right === false)
+				)
 		});
 		idleState.setAnimation( actions['idle'] );
 
@@ -87,24 +89,22 @@ async function loadModel(){
 				name: 'walk', 
 				model: data, 
 				condition: inputs => ( 
-						(inputs.forward === true ||
-								inputs.forward === true)
+						(inputs.forward || inputs.left || inputs.right || inputs.backward )
 						&& (inputs.shift === false)),
 		});
 		walkState.setAnimation( actions['walk'] );
-		walkState.setMovement( mover.moveFoward );
+		walkState.setMovement( mover.moveFoward() );
 
 		/* define run state */
 		const runState = new State({ 
 				name: 'run', 
 				model: data, 
-				condition: inputs => ( 
-						(inputs.forward === true ||
-								inputs.forward === true)
+				condition: inputs => (
+						(inputs.forward || inputs.left || inputs.right || inputs.backward )
 						&& (inputs.shift === true)),
 		});
 		runState.setAnimation( actions['run'] );
-		runState.setMovement( mover.moveFoward );
+		runState.setMovement( mover.moveFoward(500) );
 
 		/* state connections */
 		const stateConnnections = [
@@ -116,14 +116,19 @@ async function loadModel(){
 				['run', 'idle' ],
 		];
 
-		// states to process
-		const states = [ idleState, walkState, runState  ]; 
-		// update callback function
-		const updateCallback = (delta, inputs, model) => {
+		const globalUpdate = () => {
+				//console.log(data.rotation)
 		}
+
+		// states to process
+		const states = [ idleState, walkState, runState ]; 
+
+		/* global  update callback function */
+		//const updateCallback = (delta, inputs, model) => {}
+
 		// create state machine
 		const stateMachine = createFiniteStateMachine( 
-				states, stateConnnections, data, 'idle', // updateCallback 
+				states, stateConnnections, data, 'idle', globalUpdate
 		);
 
 		//console.log("stateMachine", stateMachine);
@@ -140,7 +145,8 @@ async function loadModel(){
 						delta, // pass the delta
 						controller.getInputs(), // pass the input
 				);
-				mixer.update(delta); // update animation
+				// update animation 
+				mixer.update(delta);
 		}
 
 		/* scale n' tweaks */
@@ -159,8 +165,6 @@ async function loadModel(){
 
 		return data;
 }
-
-
 
 
 
