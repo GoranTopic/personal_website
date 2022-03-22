@@ -52,7 +52,6 @@ class State{
 		}
 }
 
-
 class FinateStateMachine {
 		/* this object keeps track fo the states,
 		 *  their edges and current and previous State
@@ -91,7 +90,6 @@ class FinateStateMachine {
 		/* looks for states in states array */
 		getStateByName = name => 
 				this._states.filter( s => s._name === name)[0]
-		
 
 		/* add the obj or a state to the states array */
 		addState = state => 
@@ -140,12 +138,12 @@ class FinateStateMachine {
 				this._currentState = state;
 				// run exit function from the previous state
 				this._previousState._exit &&
-						this._previousState._exit();
+						this._previousState._exit(this._previousState, this._currentState);
 				this._previousState?._animation?.stop &&
 						this._previousState?._animation?.stop();
 				// run enter functions from next state
 				this._currentState?._enter &&
-						this._currentState?._enter();
+						this._currentState?._enter(this._currentState, this._previousState);
 				if(this._currentState?._animation?.play){
 						this._currentState?._animation.play();
 				}

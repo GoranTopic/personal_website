@@ -83,22 +83,55 @@ async function loadModel(){
 				)
 		});
 		idleState.setAnimation( actions['idle'] );
+		idleState.setEnterCallback( (curState, prevState) => {  
+				const idleAction = curState._animation;
+				if (prevState) {
+						const prevAction = prevState._animation;
+						idleAction.time = 0.0;
+						idleAction.enabled = true;
+						idleAction.setEffectiveTimeScale(1.0);
+						idleAction.setEffectiveWeight(1.0);
+						idleAction.crossFadeFrom(prevAction, 0.5, true);
+						idleAction.play();
+				} else {
+						idleAction.play();
+				}
+		});
 
-		let walkSecCount = 0;
-		let walkLimit = 50;
+		let walkWait = 0;
+		let wait2Run = 50;
 		/* define walk state */
 		const walkState = new State({ 
 				name: 'walk', 
 				model: data, 
 				condition: inputs => ( 
 						(inputs.forward || inputs.left || inputs.right || inputs.backward )
-						&& ( (inputs.shift === true) || (walkSecCount < walkLimit ) )
+						&& ( (walkWait < wait2Run ) )
 				),
 		});
 		walkState.setAnimation( actions['walk'] );
 		walkState.setMovement( mover.moveFoward() );
 		walkState.setUpdateCallback( () => {
-				walkSecCount += 1;
+				walkWait += 1;
+		});
+		walkState.setEnterCallback( (curState, prevState)  => {
+				const curAction = curState._animation;
+				if (prevState) {
+						const prevAction = prevState._animation;
+						curAction.enabled = true;
+						if (prevState.Name == 'run') {
+								const ratio = curAction.getClip().duration / prevAction.getClip().duration;
+								curAction.time = prevAction.time * ratio;
+						} else {
+								curAction.time = 0.0;
+								curAction.setEffectiveTimeScale(1.0);
+								curAction.setEffectiveWeight(1.0);
+						}
+						curAction.crossFadeFrom(prevAction, 0.5, true);
+						curAction.play();
+				} else {
+						curAction.play();
+				}
 		});
 
 		/* define run state */
@@ -107,14 +140,35 @@ async function loadModel(){
 				model: data, 
 				condition: inputs => (
 						(inputs.forward || inputs.left || inputs.right || inputs.backward )
-						&& ( (inputs.shift === true) || (walkSecCount > walkLimit ) )
+						&& ( (walkWait > wait2Run ) )
 				),
 		});
 		runState.setAnimation( actions['run'] );
 		runState.setMovement( mover.moveFoward(500) );
-		runState.setExitCallback( () => {
-				walkSecCount = 0;
+		runState.setEnterCallback( (curState, prevState) => {
+				const curAction = curState._animation;
+				console.log(curState);
+				if (prevState) {
+						const prevAction = prevState._animation;
+						curAction.enabled = true;
+						if (prevState._name == 'walk') {
+								const ratio = curAction.getClip().duration / prevAction.getClip().duration;
+								curAction.time = prevAction.time * ratio;
+						} else {
+								curAction.time = 0.0;
+								curAction.setEffectiveTimeScale(1.0);
+								curAction.setEffectiveWeight(1.0);
+						}
+						curAction.crossFadeFrom(prevAction, 0.5, true);
+						curAction.play();
+				} else {
+						curAction.play();
+				}
 		});
+		runState.setExitCallback( () => {
+				walkWait = 0;
+		});
+
 
 		/* state connections */
 		const stateConnnections = [
@@ -177,34 +231,4 @@ async function loadModel(){
 }
 
 
-
-/*
-const walkState = new State("walk", actions.walk);
-walkState.enter = (curAction, previousState) => {
-		if(previousState){
-				if(previousState.Name == 'Run'){
-						const ratio = curAction.getClip().duration / prevAction.getClip().duration;
-						curAction.time = previousState.time * ratio;
-				}else{
-						curAction.time = 0.0;
-						curAction.setEffectiveTimeScale(1.0);
-						curAction.setEffectiveWeight(1.0);
-				}
-				curAction.crossFadeFrom(prevAction, 0.5, true);
-				curAction.play();
-		}else{
-				curAction.play();
-		}
-}
-walkState.update = (delta, input) => {
-		if (input.key.forward || input.key.backward) {
-				if (input.key.shift) {
-						this.SetState('run');
-				}
-				return;
-		}
-		this._parent.SetState('idle');
-}
-*/
-	
 export { loadModel }
