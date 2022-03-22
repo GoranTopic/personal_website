@@ -33,13 +33,7 @@ class KeyboardInputController{
 						case 83: // s 
 								this.inputs.backward = isDown? true: false;
 								break;
-						case 32: // space 
-								this.inputs.space = isDown? true: false;
-								break;
-						case 16: // swift 
-								this.inputs.shift = isDown? true: false;
-								break;
-						case 72: // h
+												case 72: // h
 								this.inputs.left = isDown? true: false;
 								break;
 						case 74: // j
@@ -51,6 +45,13 @@ class KeyboardInputController{
 						case 76: // l
 								this.inputs.right = isDown? true: false;
 								break;
+						case 32: // space 
+								this.inputs.space = isDown? true: false;
+								break;
+						case 16: // swift 
+								this.inputs.shift = isDown? true: false;
+								break;
+
 				}
 		}
 

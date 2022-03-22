@@ -84,16 +84,22 @@ async function loadModel(){
 		});
 		idleState.setAnimation( actions['idle'] );
 
+		let walkSecCount = 0;
+		let walkLimit = 50;
 		/* define walk state */
 		const walkState = new State({ 
 				name: 'walk', 
 				model: data, 
 				condition: inputs => ( 
 						(inputs.forward || inputs.left || inputs.right || inputs.backward )
-						&& (inputs.shift === false)),
+						&& ( (inputs.shift === true) || (walkSecCount < walkLimit ) )
+				),
 		});
 		walkState.setAnimation( actions['walk'] );
 		walkState.setMovement( mover.moveFoward() );
+		walkState.setUpdateCallback( () => {
+				walkSecCount += 1;
+		});
 
 		/* define run state */
 		const runState = new State({ 
@@ -101,10 +107,14 @@ async function loadModel(){
 				model: data, 
 				condition: inputs => (
 						(inputs.forward || inputs.left || inputs.right || inputs.backward )
-						&& (inputs.shift === true)),
+						&& ( (inputs.shift === true) || (walkSecCount > walkLimit ) )
+				),
 		});
 		runState.setAnimation( actions['run'] );
 		runState.setMovement( mover.moveFoward(500) );
+		runState.setExitCallback( () => {
+				walkSecCount = 0;
+		});
 
 		/* state connections */
 		const stateConnnections = [
