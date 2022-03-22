@@ -45,6 +45,7 @@ async function loadPlayer(camera){
 		/* mover component  */ 
 		const mover = new movement({
 				model: data,
+				camera: camera,
 		});
 
 		/* color the model */
@@ -96,10 +97,12 @@ async function loadPlayer(camera){
 				} else {
 						idleAction.play();
 				}
+				walkWait = 0;
 		});
 
 		let walkWait = 0;
-		let wait2Run = 50;
+		let wait2Run = 30;
+		let runningSpeed=380;
 		/* define walk state */
 		const walkState = new State({ 
 				name: 'walk', 
@@ -144,7 +147,7 @@ async function loadPlayer(camera){
 				),
 		});
 		runState.setAnimation( actions['run'] );
-		runState.setMovement( mover.moveFoward(500) );
+		runState.setMovement( mover.moveFoward(runningSpeed) );
 		runState.setEnterCallback( (curState, prevState) => {
 				const curAction = curState._animation;
 				if (prevState) {
@@ -194,11 +197,8 @@ async function loadPlayer(camera){
 				states, stateConnnections, data, 'idle', globalUpdate
 		);
 
-		//console.log("stateMachine", stateMachine);
-		stateMachine.print_paths();
-		console.log("current state:", 
-				stateMachine.getCurrentState()._name
-		);
+		//stateMachine.print_paths();
+		//console.log("current state:", stateMachine.getCurrentState()._name);
 
 		/* update function
 		 * this witll call the state machine updater

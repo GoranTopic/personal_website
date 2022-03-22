@@ -3,7 +3,7 @@ import { createCamera } from '../components/camera';
 import { createScene } from '../components/scene';
 import { createLights } from '../components/lights';
 import { loadAstro } from '../components/astro';
-import { loadModel } from '../components/model';
+import { loadPlayer } from '../components/player';
 import { createPlane } from '../components/plane';
 import { createGrid } from '../components/grid';
 //import { createMeshGroup } from '../components/meshGroup';
@@ -71,10 +71,13 @@ class World {
 				//scene.add(astro);
 				//loop.add(astro);
 
-				const model = await loadModel();
+				const player = await loadPlayer(camera);
 				//console.log("model:", model);
-				scene.add(model);
-				loop.add(model);
+				let { x, y, z } = player.position;
+				controller['targetModel'] = player
+				scene.add(player);
+				loop.add(player);
+
 		}
 		
 		// start the loop

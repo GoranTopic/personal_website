@@ -4,80 +4,79 @@ class movement{
 		/* this class controls the movment vectors of a oject 
 		 *  it uses the accelatation and velocity as well as PI somehow,
 		 *  to make realistic movment*/
-		constructor({ model, velocity=null, acceleration=null, decceleration=null }){
+		constructor({ model, speed=170, turnSpeed=0.2, camera=null }){
 				this.model = model;
-				this.velocity = velocity || new Vector3(0, 0, 0);
-				this.rotation = 0;
-				this.max_velocity = new Vector3(0, 0, 0);
-				this.acceleration = acceleration || new Vector3(1, 0.25, 50.0);
-				this.decceleration = decceleration || new Vector3(-0.0005, -0.0001, -5.0);
-				this.frameDecceleration = new Vector3(
-						this.velocity.x * this.decceleration.x,
-						this.velocity.y * this.decceleration.y,
-						this.velocity.z * this.decceleration.z );
-				this.profiles = {};
-
-				this._Q = new Quaternion();
-				this._A = new Vector3();
-				this._R = model.quaternion.clone();
+				this.camera = camera
+				this.speed = speed;
+				this.turnSpeed = turnSpeed;
+				this._velocity = new Vector3(0, 0, 0);
+				this._rotation = 0;
+				this._acc = 0;
 		}
 
 		setAcceleration = acc => 
 				/* set the reservation */
-				this.acceleration = acc;
+				this._acc = acc;
 
-		setAccProfile = (name, acc=null, maxVel=null, decc=null) => {
-				/* set a profile with the max velocity and the acceletation */
-				this.profiles[name] = {
-						acceleration: acc	   || this.acceleration,
-						max_velocity: maxVel || this.max_velocity ,
-						decceleration: decc  || this.decceleration,
-						frameDecceleration: new Vector3(
-								velocity.x * decceleration.x,
-								velocity.y * decceleration.y,
-								velocity.z * decceleration.z 
-						)
+		trunSmoothly = target => { // turn it smmothly
+				let y = this.model.rotation.y;
+				if (target > y){
+						if(y + this.turnSpeed > target) 
+								this.model.rotation.y = target
+						else
+								this.model.rotation.y += this.turnSpeed;
+				}else if(target < y){
+						if(y - this.turnSpeed < target) 
+								this.model.rotation.y = target
+						else
+								this.model.rotation.y -= this.turnSpeed;
 				}
 		}
 
 		rotate = (delta, inputs) => {
-				this.rotation = 0;
+				this._rotation = 0;
 				let count = 0;
 				if(inputs.forward){
-						this.rotation += 1;
+						this._rotation = +1;
 						count += 1;
-						this.model.rotation.y = Math.PI;
 				}
 				if(inputs.backward){
 						// look backward
 						if(inputs.forward || inputs.left) 
-								this.rotation += 2;
+								this._rotation += 2;
 						count += 1;
 				}
 				if(inputs.left){
-						this.rotation += 1.5;
+						this._rotation += 1.5;
 						count += 1;
 				}
 				if(inputs.right){
-						this.rotation += 0.5;
+						this._rotation += 0.5;
 						count += 1;
 				}
-				if(count > 0)
-						this.model.rotation.y = (this.rotation / count) * Math.PI;
+				if(count > 0){ // if it is pressing an input 
+						let target = (this._rotation / count) * Math.PI;
+						//this.model.rotation.y = target;
+						this.trunSmoothly( target );
+				}
 		}
 
-		moveFoward = speed  => (delta, inputs) => {
+		moveFoward = (speed=null)  => (delta, inputs) => {
 				this.rotate(delta, inputs);
-				this.speed = speed || 170
-				this.velocity.setZ(this.speed);
-				this.velocity.setX(this.speed);
+				speed = speed || this.speed;
+				this._velocity.setZ(speed);
+				this._velocity.setX(speed);
 				const forward = new Vector3(0, 0, 1);
 				forward.applyQuaternion(this.model.quaternion);
 				forward.normalize();
-				forward.multiplyScalar(this.velocity.z * delta);
+				forward.multiplyScalar(this._velocity.z * delta);
 				this.model.position.add(forward);
+				this.moveCamera(this.camera, this.model, forward);
 		}
 
+		moveCamera = (camera, model, foward) => {  
+				camera.position.add(foward);
+		}
 
 }
 

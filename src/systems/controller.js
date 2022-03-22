@@ -6,7 +6,13 @@ function addController(camera, renderer){
 		controls.enableZoom = true;
 		controls.target.set( 0, 150, 0 );
 		controls.enableDamping = true;
-		controls.tick = () => controls.update();
+		controls.tick = () =>{
+				if(controls.targetModel){
+						let { x, y, z } = controls.targetModel.position;
+						controls.target.set(x, y+150, z );
+				}
+				controls.update();
+		}
 		return controls;
 }
 
