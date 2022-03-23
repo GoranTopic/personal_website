@@ -1,3 +1,4 @@
+import { Vector2 } from 'three';
 import { createCamera } from '../components/camera';
 //import { createCube } from '../components/cube';
 import { createScene } from '../components/scene';
@@ -47,6 +48,21 @@ class World {
 						plane, 
 						grid,
 				);
+
+				const thisRan = (value, value1) => {
+						console.log('pointer moved', value, value1);
+				}
+
+				const clickDown = ( value, value1 ) => {
+						const pointer = new Vector2();
+						pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+						console.log('pointer down', pointer);
+				}
+
+
+				document.addEventListener( 'pointermove', thisRan );
+				document.addEventListener( 'pointerdown', clickDown );
+
 
 				// add controller			
 				controller = addController(camera, renderer);

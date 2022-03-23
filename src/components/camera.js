@@ -1,9 +1,9 @@
 import { PerspectiveCamera } from 'three';
 
 function createCamera(){
-		let x = 100;
-		let y = 200;
-		let z = 300;
+		let x = -150;
+		let y = 1000;
+		let z = 700;
 		let fov = 45; // AKA Field of View
 		let aspect = window.innerWidth / window.innerHeight;
 		let near = 1; // the near clipping plane
