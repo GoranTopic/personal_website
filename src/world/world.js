@@ -20,7 +20,8 @@ import { createStats } from '../systems/stats'
 import { Resizer } from '../systems/Resizer';
 
 
-let camera, renderer, scene, loop, controller;
+let camera, renderer, scene, loop, controller, plane, lights, grid, player;
+
 
 class World {
 
@@ -36,11 +37,11 @@ class World {
 				// render to the DOM
 				container.appendChild(renderer.domElement);
 				//create ligths 
-				let lights = createLights();
+				lights = createLights();
 				// create ground
-				let plane = createPlane();
+				plane = createPlane();
 				// create grid
-				let grid = createGrid();
+				grid = createGrid();
 
 				// add cube to scene 
 				scene.add( 
@@ -48,22 +49,6 @@ class World {
 						plane, 
 						grid,
 				);
-
-				const thisRan = (value, value1) => {
-						console.log('pointer moved', value, value1);
-				}
-
-				const clickDown = ( value, value1 ) => {
-						const pointer = new Vector2();
-						pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
-						console.log('pointer down', pointer);
-				}
-
-
-				document.addEventListener( 'pointermove', thisRan );
-				document.addEventListener( 'pointerdown', clickDown );
-
-
 				// add controller			
 				controller = addController(camera, renderer);
 
@@ -87,10 +72,7 @@ class World {
 				//scene.add(astro);
 				//loop.add(astro);
 
-				const player = await loadPlayer(camera);
-				//console.log("model:", model);
-				let { x, y, z } = player.position;
-				controller['targetModel'] = player
+				player = await loadPlayer();
 				scene.add(player);
 				loop.add(player);
 
@@ -108,4 +90,5 @@ class World {
 
 }
 
-export { World };
+
+export { World, camera, renderer, scene, loop, controller, plane, lights, grid, player };

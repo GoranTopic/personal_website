@@ -24,6 +24,7 @@ class State{
 
 		/* wrapper function for update of the state */
 		update = (delta, inputs) => {
+				console.log('state update is running')
 				// check if it has animation action
 				this._animation?.play()
 				//console.log(this._animation?.play())
@@ -89,7 +90,7 @@ class FinateStateMachine {
 		
 		/* looks for states in states array */
 		getStateByName = name => 
-				this._states.filter( s => s._name === name)[0]
+				this._states.filter( s => s._name === name )[0]
 
 		/* add the obj or a state to the states array */
 		addState = state => 
@@ -127,10 +128,10 @@ class FinateStateMachine {
 				// passed state is null
 				if(state === null) return; 
 				// if it id passed a string
-				console.log('current state:', this._currentState._name);
-				console.log('chaging to:', state._name);
 				if(typeof state ===  "string")
 						state = this.getStateByName(state);
+				console.log('current state:', this._currentState._name);
+				console.log('chaging to:', state._name);
 				// if it is in same state
 				if(this._currentState._name === state._name) return; 
 				// swap states 
@@ -149,15 +150,15 @@ class FinateStateMachine {
 				}
 		}
 		
-		update = (delta, inputs) =>  {
+		update = (delta, keyInputs, mouseInputs) =>  {
 				// run globale update
-				this._update && this._update(delta, inputs, this.model);
+				this._update && this._update(delta, keyInputs, mouseInputs, this.model);
 				//console.log('this update', this._update);
 				// run the update function in each state
-				this._currentState.update(delta, inputs);
+				this._currentState.update(delta, keyInputs);
 				// check the condition of the inputs to determine wheter to move state
 				this.changeState(
-						this._currentState.checkStateConditions(delta, inputs)
+						this._currentState.checkStateConditions(delta, keyInputs)
 				);
 		}
 }

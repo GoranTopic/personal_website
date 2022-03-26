@@ -1,10 +1,11 @@
 import { Vector3, Quaternion } from 'three';
+import { camera }  from '../../world/world';
 
 class movement{
 		/* this class controls the movment vectors of a oject 
 		 *  it uses the accelatation and velocity as well as PI somehow,
 		 *  to make realistic movment*/
-		constructor({ model, speed=170, turnSpeed=0.2, camera=null }){
+		constructor({ model, speed=170, turnSpeed=0.2 }){
 				this.model = model;
 				this.camera = camera
 				this.speed = speed;
@@ -18,16 +19,17 @@ class movement{
 				/* set the reservation */
 				this._acc = acc;
 
-		trunSmoothly = target => { // turn it smmothly
+		turnSmoothly = angle => { // turn it smmothly
 				let y = this.model.rotation.y;
-				if (target > y){
-						if(y + this.turnSpeed > target) 
-								this.model.rotation.y = target
+				console.log('rotation:', y);
+				if (angle > y){
+						if(y + this.turnSpeed > angle) 
+								this.model.rotation.y = angle
 						else
 								this.model.rotation.y += this.turnSpeed;
-				}else if(target < y){
-						if(y - this.turnSpeed < target) 
-								this.model.rotation.y = target
+				}else if(angle < y){
+						if(y - this.turnSpeed < angle) 
+								this.model.rotation.y = angle
 						else
 								this.model.rotation.y -= this.turnSpeed;
 				}
@@ -55,14 +57,19 @@ class movement{
 						count += 1;
 				}
 				if(count > 0){ // if it is pressing an input 
+						//console.log('inputs:',inputs);
+						//console.log('rotation:',this._rotation);
 						let target = (this._rotation / count) * Math.PI;
-						//this.model.rotation.y = target;
-						this.trunSmoothly( target );
+						this.model.rotation.y = target;
+						//this.turnSmoothly( target );
 				}
 		}
 
-		moveFoward = (speed=null)  => (delta, inputs) => {
-				this.rotate(delta, inputs);
+		moveFoward = (speed=null)  => (delta, inputs=null) => {
+				console.log('moving is moving');
+				console.log('inputs', inputs);
+				inputs &&
+						this.rotate(delta, inputs);
 				speed = speed || this.speed;
 				this._velocity.setZ(speed);
 				this._velocity.setX(speed);

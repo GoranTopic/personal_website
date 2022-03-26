@@ -1,18 +1,20 @@
 import { Color, Mesh, AnimationMixer, TextureLoader, MathUtils, Vector3,
-		Quaternion, MeshStandardMaterial, MeshPhongMaterial, BackSide } from 'three';
+		Quaternion, MeshStandardMaterial, MeshPhongMaterial, BackSide, Raycaster } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 import { State, createFiniteStateMachine } from '../systems/StateMachine';
-import { KeyboardInputController } from '../systems/inputs';
+import { KeyboardInputController, MouseInputControlller } from '../systems/inputs';
 import { movement } from '../systems/movement/movement';
+import { camera, plane } from '../world/world';
 
 const loader = new FBXLoader();
 const textLoader = new TextureLoader();
 
 let data;
+let clickedPosition = null;
 
-async function loadPlayer(camera){
+async function loadPlayer(){
 		/* model
 		 * The mode has some key component,
 		 * - the state machine that handles the state of the object.
@@ -24,7 +26,7 @@ async function loadPlayer(camera){
 
 		data = await loader.loadAsync('../../resources/Alien_Helmet.fbx');
 		// make animation mixer
-		
+
 		const mixer = new AnimationMixer( data );
 		// get the actions to the actions
 		const actions = {};
@@ -40,13 +42,15 @@ async function loadPlayer(camera){
 		);
 
 		/* make input controller */
-		const controller = new KeyboardInputController();
+		const keyController = new KeyboardInputController();
+		const mouseController = new MouseInputControlller();
 
 		/* mover component  */ 
 		const mover = new movement({
 				model: data,
-				camera: camera,
 		});
+		//add mover
+		data['mover'] = mover;
 
 		/* color the model */
 		data.traverse(
@@ -76,15 +80,22 @@ async function loadPlayer(camera){
 		const idleState = new State({ 
 				name: 'idle', 
 				model: data, 
-				condition: inputs => ( 
-						(inputs.forward === false &&
-								inputs.backward === false && 
-								inputs.left === false &&
-								inputs.right === false)
-				)
+				condition: inputs => { 
+						if(clickedPosition)
+								return ((Math.abs(data.position.x - clickedPosition.x) < 50) &&
+										(Math.abs(data.position.z - clickedPosition.z) < 50))
+						else		
+								if(inputs)
+										return (inputs.forward === false &&
+												inputs.backward === false && 
+												inputs.left === false &&
+												inputs.right === false);
+						else return false
+				}
 		});
 		idleState.setAnimation( actions['idle'] );
 		idleState.setEnterCallback( (curState, prevState) => {  
+				clickedPosition = null;
 				const idleAction = curState._animation;
 				if (prevState) {
 						const prevAction = prevState._animation;
@@ -100,6 +111,7 @@ async function loadPlayer(camera){
 				walkWait = 0;
 		});
 
+		/* walking state */
 		let walkWait = 0;
 		let wait2Run = 30;
 		let runningSpeed=380;
@@ -107,10 +119,20 @@ async function loadPlayer(camera){
 		const walkState = new State({ 
 				name: 'walk', 
 				model: data, 
-				condition: inputs => ( 
-						(inputs.forward || inputs.left || inputs.right || inputs.backward )
-						&& ( (walkWait < wait2Run ) )
-				),
+				condition: inputs => {
+						if(clickedPosition)
+								return  ( (walkWait < wait2Run ) &&
+										!((data.position.x === clickedPosition.x) && 
+												(data.position.z === clickedPosition.z))
+								);
+						else
+								if(inputs) 
+								return (
+										(inputs.forward || inputs.left || inputs.right || inputs.backward )
+										&& ( walkWait < wait2Run  )
+								)
+						else false
+				},
 		});
 		walkState.setAnimation( actions['walk'] );
 		walkState.setMovement( mover.moveFoward() );
@@ -141,10 +163,20 @@ async function loadPlayer(camera){
 		const runState = new State({ 
 				name: 'run', 
 				model: data, 
-				condition: inputs => (
-						(inputs.forward || inputs.left || inputs.right || inputs.backward )
-						&& ( (walkWait > wait2Run ) )
-				),
+				condition: inputs => {
+						if(clickedPosition)
+								return  ( (walkWait > wait2Run ) &&
+										!((data.position.x === clickedPosition.x) && 
+												(data.position.z === clickedPosition.z))
+								);
+						else 
+								if(inputs)
+										return (
+												(inputs.forward || inputs.left || inputs.right || inputs.backward )
+												&& ( (walkWait > wait2Run ) )
+										)
+						else return false
+				},
 		});
 		runState.setAnimation( actions['run'] );
 		runState.setMovement( mover.moveFoward(runningSpeed) );
@@ -174,11 +206,10 @@ async function loadPlayer(camera){
 
 		/* state connections */
 		const stateConnnections = [
+				/* [ from -> to ] state */
 				['idle', 'walk'],
-				['idle', 'run' ],
 				['walk', 'idle'],
 				['walk', 'run' ],
-				['run', 'walk' ],
 				['run', 'idle' ],
 		];
 
@@ -204,9 +235,41 @@ async function loadPlayer(camera){
 		 * this witll call the state machine updater
 		 * and pass the inputs to it  */
 		data.tick = delta =>  {
+				let keyInput = keyController.getInputs();
+				//console.log(Object.values(keyInput).some( v => v === true))
+				if(Object.values(keyInput).some( v => v === true)){
+						console.log(data.rotation.y);
+						if(clickedPosition){
+								clickedPosition = null;
+								data.lookAt(0,0,0);
+						}
+						stateMachine.update(
+								delta, // pass the delta
+								keyController.getInputs(), // pass the input
+						);
+				}
+				if(mouseController.checkClick()){
+						console.log('in walking loop');
+						let clickPos = mouseController.getInputs().mouseClick;
+						// let ray trace to get the model to look the the plane
+						// use a ray to get the intersection with the plane obj
+						let raycaster = new Raycaster();
+						raycaster.setFromCamera( clickPos, camera );
+						const intersects = raycaster.intersectObject( plane, false );
+						//if there was a intersect
+						let intersect = intersects.length > 0 ?
+								intersects[0].point.add(intersects[0].face.normal)
+								: null
+						// set global clickedPosition
+						clickedPosition = intersect;
+						// look at that point
+						data.lookAt(intersect);
+						console.log('data after click', data.rotation) 
+						// call state machine
+						console.log(clickedPosition)
+				}
 				stateMachine.update(
 						delta, // pass the delta
-						controller.getInputs(), // pass the input
 				);
 				// update animation 
 				mixer.update(delta);
