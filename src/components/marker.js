@@ -1,52 +1,83 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { Color } from 'three';
+import { Color, TorusGeometry, Mesh, MeshLambertMaterial  } from 'three';
 
 async function loadMarker() {
 		const loader = new GLTFLoader();
 
 		// asyncronosly load the model
-		const markerData = await loader.loadAsync('../../resources/marker/uxrzone_circle_floor/scene.gltf');
+		const markerData = await loader.loadAsync(
+				'../../resources/marker/uxrzone_circle_floor/scene.gltf'
+		);
 
 
-		const marker = markerData.scene;
+		const radius = 7;  // ui: radius
+		const tubeRadius = .7;  // ui: tubeRadius
+		const radialSegments = 3;  // ui: radialSegments
+		const tubularSegments = 18;  // ui: tubularSegments
 
-		let x = 0, y = 0, z = 0; 
+		const torus = new TorusGeometry(
+				radius, tubeRadius,
+				radialSegments, tubularSegments);
 
-		let scale = 100; // scale down 
-		marker.scale.set(scale, 0, scale);
+		//const marker = markerData.scene;
 
-		marker.traverse( child => {
-				if( child.type === 'Points' ){
-						if( child.name == 'Object_2' ){
-								//console.log('child', child);
-								child.material.color = new Color('azure');
-						}
-						if( child.name == 'Object_3' ){
-								//console.log('child', child); // what is this?
-								// what does it do? who knows?
-								// try asking god...
-								child.material.color = new Color('pink');
-						}
-				}
+		// make mateial
+		const material = new MeshLambertMaterial({ 
+				color: 'red',
+				transparent: true,
+				opacity: 0.4,
+				flatShading: false,
 		});
 
+		// mesh
+		const marker = new Mesh(torus, material);
 
-		// set up model
-		//const marker = setupModel(markerData);
+		// scale up
+		let scaleUpTo = 10; // scale up
+		let scale = 0;
+		let heightScale = 20;
+		// rotate
+		let rotation = Math.PI / 2;
+		marker.rotateX(rotation);
+		marker.scale.set(scale, scale, heightScale);
+		// location
+		let x = 0, y = 2, z = 0; 
 		marker.position.set(x, y, z);
+		// set if it place
+		marker.isPlaced = false;
 
 		marker.placeAt = pos => {
+				if(marker.isPlaced){ 
+						// if it is already place someWhere else
+						scale = 0;
+						marker.scale.set(scale, scale, 1)
+				}
 				marker.position.set(pos.x, y, pos.z);
-				marker.visible = true;
+				marker.isPlaced = true;
 		}
 
-		marker.hide = () => marker.visible = false;
+		marker.hide = () => marker.isPlaced = false;
 
-		console.log('marky-mark!', marker);
+		//console.log('marky-mark!', marker);
 		
-		marker['tick'] = () => {};
-
-		marker.visible = false;
+		let scaleUpSpeed = 0.6;
+		marker.tick = () => {
+				// animate scaling up and down
+				if(marker.isPlaced){
+						if(marker.visible === false) marker.visible = true;
+						if(marker.scale.x < scaleUpTo){
+								scale += scaleUpSpeed;
+								marker.scale.set(scale, scale, heightScale);
+						}
+				}else{
+						if(scale <= 0) marker.visible = false; 
+						else if(scale >= 0){ // scale down
+								scale -= scaleUpSpeed;
+								marker.scale.set(scale, scale, heightScale);
+						}
+						
+				}
+		};
 
 		return marker;
 }

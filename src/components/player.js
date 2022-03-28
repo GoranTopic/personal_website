@@ -64,7 +64,6 @@ async function loadPlayer(){
 												color: new Color(0x049ef4),
 												transparent: true,
 												opacity: 0.4,
-												shininess: 1.0,
 												flatShading: false, });
 										return m;
 								});

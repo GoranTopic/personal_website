@@ -72,7 +72,6 @@ class World {
 				marker = await loadMarker();
 				scene.add(marker);
 				loop.add(marker);
-				//controller.target.set(marker.position);
 
 		}
 		
