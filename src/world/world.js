@@ -7,6 +7,7 @@ import { loadAstro } from '../components/astro';
 import { loadPlayer } from '../components/player';
 import { createPlane } from '../components/plane';
 import { createGrid } from '../components/grid';
+import { loadMarker } from '../components/marker';
 //import { createMeshGroup } from '../components/meshGroup';
 //import { loadDancerDude } from '../components/dancerDude'; 
 //import { loadBirds } from '../components/birds/birds';
@@ -20,11 +21,10 @@ import { createStats } from '../systems/stats'
 import { Resizer } from '../systems/Resizer';
 
 
-let camera, renderer, scene, loop, controller, plane, lights, grid, player;
+let camera, renderer, scene, loop, controller, plane, lights, grid, player, marker;
 
 
 class World {
-
 		constructor(container){
 				// create camera
 				camera = createCamera();
@@ -64,17 +64,15 @@ class World {
 		}
 
 		async init() { // load async objects
-				// load ancer
-				//const dancer = await loadSambaDancer();
-				//scene.add(dancer);
-				//loop.add(dancer);
-				//const astro = await loadAstro();
-				//scene.add(astro);
-				//loop.add(astro);
 
 				player = await loadPlayer();
 				scene.add(player);
 				loop.add(player);
+				
+				marker = await loadMarker();
+				scene.add(marker);
+				loop.add(marker);
+				//controller.target.set(marker.position);
 
 		}
 		
@@ -91,4 +89,16 @@ class World {
 }
 
 
-export { World, camera, renderer, scene, loop, controller, plane, lights, grid, player };
+export { 
+		World, 
+		camera, 
+		renderer, 
+		scene, 
+		loop, 
+		controller, 
+		plane, 
+		lights, 
+		grid, 
+		player,
+		marker,
+};

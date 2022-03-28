@@ -1,105 +1,104 @@
-import { Vector2, Vector3, Raycaster } from 'three' ;
+import { Vector2 } from 'three';
 
-class KeyboardInputController{
+class InputController{
 		constructor(){
 				this.inputs = {
-						forward: false,
-						backward: false,
-						left: false,
-						right: false,
-						space: false,
-						shift: false,
+						keyboard: {
+								forward: false,
+								backward: false,
+								left: false,
+								right: false,
+								space: false,
+								shift: false,
+						},
+						mouse: {
+								// make sure we aree getting the latest mouse click
+								isClicked: false, 
+								position: new Vector2(),
+								click: new Vector2(),
+						}
 				}
-				document.addEventListener(
-						'keydown',
-						e => this.onKeyChange(e, true),
-						false
-				);
-				document.addEventListener('keyup',
-						e => this.onKeyChange(e, false),
-						false
-				);
+				// event listeners 
+				// for keyboard
+				document.addEventListener( 'keydown', e => this.onKeyChange(e, true), false);
+				document.addEventListener('keyup', e => this.onKeyChange(e, false), false);
+				// for mouse
+				document.addEventListener( 'pointermove', this.handleMouseMove  );
+				document.addEventListener( 'pointerdown', this.handleMouseClick );
 		}
 
+		// handle key press
 		onKeyChange = (event, isDown) => {
 				switch (event.keyCode){
 						case 87: // w 
-								this.inputs.forward = isDown? true : false;
+								this.inputs.keyboard.forward = isDown? true : false;
 								break;
 						case 65: // a
-								this.inputs.left =  isDown? true : false;
+								this.inputs.keyboard.left =  isDown? true : false;
 								break;
 						case 68: // d 
-								this.inputs.right = isDown? true : false;
+								this.inputs.keyboard.right = isDown? true : false;
 								break;
 						case 83: // s 
-								this.inputs.backward = isDown? true: false;
+								this.inputs.keyboard.backward = isDown? true: false;
 								break;
 						case 72: // h
-								this.inputs.left = isDown? true: false;
+								this.inputs.keyboard.left = isDown? true: false;
 								break;
 						case 74: // j
-								this.inputs.backward = isDown? true: false;
+								this.inputs.keyboard.backward = isDown? true: false;
 								break;
 						case 75: // k
-								this.inputs.forward = isDown? true: false;
+								this.inputs.keyboard.forward = isDown? true: false;
 								break;
 						case 76: // l
-								this.inputs.right = isDown? true: false;
+								this.inputs.keyboard.right = isDown? true: false;
 								break;
 						case 32: // space 
-								this.inputs.space = isDown? true: false;
+								this.inputs.keyboard.space = isDown? true: false;
 								break;
 						case 16: // swift 
-								this.inputs.shift = isDown? true: false;
+								this.inputs.keyboard.shift = isDown? true: false;
 								break;
 				}
 		}
 
-		getInputs = () => this.inputs;
-}
+		/* handle mouse movement */
+		handleMouseMove = event => 
+				this.inputs.mouse.position.set( 
+						( event.clientX / window.innerWidth ) * 2 - 1,
+						- ( event.clientY / window.innerHeight ) * 2 + 1
+				);
 
-class MouseInputControlller{
-		constructor(){
-				this._mouseClicked = false;
-				this.inputs = {
-						mousePosition: new Vector2(),
-						mouseClick: new Vector2(),
-				};
-				//event listeneres
-				document.addEventListener( 'pointermove', this.handleMouseMove  );
-				document.addEventListener( 'pointerdown', this.handlePlaneClick );
-		}
-
-		
 		/* handle mouse click on plane*/
-		handlePlaneClick = event => {
+		handleMouseClick = event => {
 				/* get click on screen */
-				this.inputs.mouseClick.set( 
+				this.inputs.mouse.click.set( 
 						( event.clientX / window.innerWidth ) * 2 - 1,
 						- ( event.clientY / window.innerHeight ) * 2 + 1
 				);
 				// mark as clicked
-				this._mouseClicked = true;
+				this.inputs.mouse.isClicked = true;
 		}
 
-		/* handle mouse movement */
-		handleMouseMove = (event, isDown) => 
-				this.inputs.mousePosition.set( 
-						( event.clientX / window.innerWidth ) * 2 - 1,
-						- ( event.clientY / window.innerHeight ) * 2 + 1
-				);
-
-		checkClick = () => this._mouseClicked;
-
-		getInputs = () => { 
+		// getters 
+		getKeyInputs = () => this.inputs.keyboard;
+		getMousePos = () => this.inputs.mouse.position;
+		getMouseClick = () => { 
 				//set the most recent mouse click to false
-	 			this._mouseClicked = false;
+				this.inputs.mouse.isClicked = false;
 				// makr the most recenet click as off 
 				// every time it is checked
-				return this.inputs;
+				return this.inputs.mouse.click;
 		}
+		// safe way to check latest click
+		checkClick = () => this.inputs.mouse.isClicked;
+		// check if there are 
+		checkKey = () => Object.values(this.inputs.keyboard).some( v => v === true );
+
 }
 
+const inputs = new InputController();
 
-export { KeyboardInputController, MouseInputControlller }
+
+export { inputs } 

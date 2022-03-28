@@ -57,17 +57,15 @@ class movement{
 						count += 1;
 				}
 				if(count > 0){ // if it is pressing an input 
-						//console.log('inputs:',inputs);
-						//console.log('rotation:',this._rotation);
 						let target = (this._rotation / count) * Math.PI;
-						this.model.rotation.y = target;
+						this.model.rotation.set(0, target ,0);
+						this.model.updateMatrix();
+						// not currently working with point 
 						//this.turnSmoothly( target );
 				}
 		}
 
 		moveFoward = (speed=null)  => (delta, inputs=null) => {
-				console.log('moving is moving');
-				console.log('inputs', inputs);
 				inputs &&
 						this.rotate(delta, inputs);
 				speed = speed || this.speed;

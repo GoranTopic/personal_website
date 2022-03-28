@@ -1,0 +1,241 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 65535,
+      "max": [
+        10.107075691223145,
+        0.775124728679657,
+        10.118428230285645
+      ],
+      "min": [
+        -10.10682487487793,
+        -0.7751265168190002,
+        -8.594691276550293
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 786420,
+      "componentType": 5126,
+      "count": 65535,
+      "max": [
+        0.9999990463256836,
+        0.9997768402099609,
+        0.9999990463256836
+      ],
+      "min": [
+        -0.9999990463256836,
+        -0.9997768402099609,
+        -0.9999990463256836
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 65535,
+      "max": [
+        0.0,
+        0.6980392336845398,
+        1.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.6980392336845398,
+        1.0,
+        1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1572840,
+      "componentType": 5126,
+      "count": 34460,
+      "max": [
+        8.58859634399414,
+        0.7751266956329346,
+        6.984036922454834
+      ],
+      "min": [
+        -9.907003402709961,
+        -0.7751261591911316,
+        -10.118509292602539
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1986360,
+      "componentType": 5126,
+      "count": 34460,
+      "max": [
+        0.7857939004898071,
+        0.9997768402099609,
+        0.6889302134513855
+      ],
+      "min": [
+        -0.9999990463256836,
+        -0.9997768402099609,
+        -0.9999990463256836
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1048560,
+      "componentType": 5126,
+      "count": 34460,
+      "max": [
+        0.0,
+        0.6980392336845398,
+        1.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.6980392336845398,
+        1.0,
+        1.0
+      ],
+      "type": "VEC4"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "𝔼ℕ𝔼𝔸 𝕃𝔼 𝔽𝕆ℕ𝕊 (https://sketchfab.com/enealefons)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/uxrzone-circle-floor-104391b50327479b9d87b0b8ad71241c",
+      "title": "UXRZONE Circle Floor"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 2399880,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1599920,
+      "byteOffset": 2399880,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 3999800,
+      "uri": "scene.bin"
+    }
+  ],
+  "extensionsUsed": [
+    "KHR_materials_unlit"
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        0.0,
+        1.0,
+        1.0
+      ],
+      "extensions": {
+        "KHR_materials_unlit": {}
+      },
+      "name": "Scene_-_Root",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0.0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "COLOR_0": 2,
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "material": 0,
+          "mode": 0
+        }
+      ]
+    },
+    {
+      "name": "Object_1",
+      "primitives": [
+        {
+          "attributes": {
+            "COLOR_0": 5,
+            "NORMAL": 4,
+            "POSITION": 3
+          },
+          "material": 0,
+          "mode": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        0.06632091104984283,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.06632091104984283,
+        -2.945240098466099e-17,
+        0.0,
+        0.0,
+        2.945240098466099e-17,
+        -0.06632091104984283,
+        0.0,
+        0.0,
+        -4.357099533081054e-05,
+        -4.321336746215821e-05,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2,
+        3
+      ],
+      "name": "Geode"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    },
+    {
+      "mesh": 1,
+      "name": "Object_3"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

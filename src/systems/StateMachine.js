@@ -24,7 +24,7 @@ class State{
 
 		/* wrapper function for update of the state */
 		update = (delta, inputs) => {
-				console.log('state update is running')
+				//console.log('state update is running')
 				// check if it has animation action
 				this._animation?.play()
 				//console.log(this._animation?.play())
