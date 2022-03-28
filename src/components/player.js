@@ -4,16 +4,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 import { State, createFiniteStateMachine } from '../systems/StateMachine';
-import { KeyboardInputController, MouseInputControlller } from '../systems/inputs';
+//import { inputs } from '../systems/inputs';
+import { inputs } from '../systems/inputs';
 import { movement } from '../systems/movement/movement';
-import { camera, plane } from '../world/world';
+import { camera, plane, marker } from '../world/world';
 
 const loader = new FBXLoader();
 const textLoader = new TextureLoader();
 
 let data;
-let clickedPosition = null;
-
 async function loadPlayer(){
 		/* model
 		 * The mode has some key component,
@@ -23,8 +22,11 @@ async function loadPlayer(){
 		 *		and passes it to the state machince to change the state
 		 * - the mover wich moves the objec on each state.
 		 * */
+		
+		// is the user clicks on the plane, this var has the position 
+		let clickedPosition = null;
 
-		data = await loader.loadAsync('../../resources/Alien_Helmet.fbx');
+		let data = await loader.loadAsync('../../resources/Alien_Helmet.fbx');
 		// make animation mixer
 
 		const mixer = new AnimationMixer( data );
@@ -40,10 +42,6 @@ async function loadPlayer(){
 						)
 				)
 		);
-
-		/* make input controller */
-		const keyController = new KeyboardInputController();
-		const mouseController = new MouseInputControlller();
 
 		/* mover component  */ 
 		const mover = new movement({
@@ -77,25 +75,31 @@ async function loadPlayer(){
 
 
 		/* define idle state */
+		let radioOfError = 10;
 		const idleState = new State({ 
 				name: 'idle', 
 				model: data, 
-				condition: inputs => { 
+				condition: () => { 
 						if(clickedPosition)
-								return ((Math.abs(data.position.x - clickedPosition.x) < 50) &&
-										(Math.abs(data.position.z - clickedPosition.z) < 50))
-						else		
-								if(inputs)
-										return (inputs.forward === false &&
-												inputs.backward === false && 
-												inputs.left === false &&
-												inputs.right === false);
-						else return false
+								// radion of error it had
+								return ((Math.abs(data.position.x - clickedPosition.x) < radioOfError) &&
+										(Math.abs(data.position.z - clickedPosition.z) < radioOfError))
+						else{		
+								if(inputs.checkKey()){
+										let keys =  inputs.getKeyInputs();
+										return (keys.forward === false &&
+												keys.backward === false && 
+												keys.left === false &&
+												keys.right === false);
+								}else return true
+						}
 				}
 		});
 		idleState.setAnimation( actions['idle'] );
 		idleState.setEnterCallback( (curState, prevState) => {  
 				clickedPosition = null;
+				// rmove marker 
+				marker.hide();
 				const idleAction = curState._animation;
 				if (prevState) {
 						const prevAction = prevState._animation;
@@ -113,25 +117,27 @@ async function loadPlayer(){
 
 		/* walking state */
 		let walkWait = 0;
-		let wait2Run = 30;
+		let wait2Run = 50;
 		let runningSpeed=380;
 		/* define walk state */
 		const walkState = new State({ 
 				name: 'walk', 
 				model: data, 
-				condition: inputs => {
+				condition: () => {
 						if(clickedPosition)
 								return  ( (walkWait < wait2Run ) &&
 										!((data.position.x === clickedPosition.x) && 
 												(data.position.z === clickedPosition.z))
 								);
-						else
-								if(inputs) 
-								return (
-										(inputs.forward || inputs.left || inputs.right || inputs.backward )
-										&& ( walkWait < wait2Run  )
-								)
-						else false
+						else{
+								if(inputs.checkKey()){
+										let keys =  inputs.getKeyInputs();
+										return (
+												(keys.forward || keys.left || keys.right || keys.backward )
+												&& ( walkWait < wait2Run  )
+										)
+								}else false
+						}
 				},
 		});
 		walkState.setAnimation( actions['walk'] );
@@ -139,7 +145,7 @@ async function loadPlayer(){
 		walkState.setUpdateCallback( () => {
 				walkWait += 1;
 		});
-		walkState.setEnterCallback( (curState, prevState)  => {
+		walkState.setEnterCallback( (curState, prevState) => {
 				const curAction = curState._animation;
 				if (prevState) {
 						const prevAction = prevState._animation;
@@ -163,19 +169,21 @@ async function loadPlayer(){
 		const runState = new State({ 
 				name: 'run', 
 				model: data, 
-				condition: inputs => {
+				condition: () => {
 						if(clickedPosition)
 								return  ( (walkWait > wait2Run ) &&
 										!((data.position.x === clickedPosition.x) && 
 												(data.position.z === clickedPosition.z))
 								);
-						else 
-								if(inputs)
+						else{ 
+								if(inputs.checkKey()){
+										let keys =  inputs.getKeyInputs();
 										return (
-												(inputs.forward || inputs.left || inputs.right || inputs.backward )
+												(keys.forward || keys.left || keys.right || keys.backward )
 												&& ( (walkWait > wait2Run ) )
 										)
-						else return false
+								}else return false
+						}
 				},
 		});
 		runState.setAnimation( actions['run'] );
@@ -206,7 +214,7 @@ async function loadPlayer(){
 
 		/* state connections */
 		const stateConnnections = [
-				/* [ from -> to ] state */
+				/*[ from -> to ] state*/
 				['idle', 'walk'],
 				['walk', 'idle'],
 				['walk', 'run' ],
@@ -235,22 +243,20 @@ async function loadPlayer(){
 		 * this witll call the state machine updater
 		 * and pass the inputs to it  */
 		data.tick = delta =>  {
-				let keyInput = keyController.getInputs();
+				let keyInput = inputs.getKeyInputs();
+				//console.log(keyInput);
 				//console.log(Object.values(keyInput).some( v => v === true))
-				if(Object.values(keyInput).some( v => v === true)){
-						console.log(data.rotation.y);
+				if( inputs.checkKey() )
 						if(clickedPosition){
 								clickedPosition = null;
 								data.lookAt(0,0,0);
 						}
 						stateMachine.update(
 								delta, // pass the delta
-								keyController.getInputs(), // pass the input
+								keyInput, // pass the input
 						);
-				}
-				if(mouseController.checkClick()){
-						console.log('in walking loop');
-						let clickPos = mouseController.getInputs().mouseClick;
+				if( inputs.checkClick() ){
+						let clickPos = inputs.getMouseClick();
 						// let ray trace to get the model to look the the plane
 						// use a ray to get the intersection with the plane obj
 						let raycaster = new Raycaster();
@@ -262,15 +268,15 @@ async function loadPlayer(){
 								: null
 						// set global clickedPosition
 						clickedPosition = intersect;
+						// set marker 
+						marker.placeAt(intersect);
 						// look at that point
 						data.lookAt(intersect);
-						console.log('data after click', data.rotation) 
 						// call state machine
-						console.log(clickedPosition)
+						//console.log(clickedPosition)
 				}
-				stateMachine.update(
-						delta, // pass the delta
-				);
+				// pass detla to update
+				stateMachine.update(delta );
 				// update animation 
 				mixer.update(delta);
 		}
@@ -278,7 +284,8 @@ async function loadPlayer(){
 		/* scale n' tweaks */
 		let scale = 0.8; // scale down 
 		data.scale.set(scale, scale, scale);
-		data.position.set(0, 0, 0)
+		// set initial position 
+		data.position.set(500, 0, 0)
 
 		// make models have shadows
 		if(data.traverse)

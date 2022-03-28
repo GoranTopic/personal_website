@@ -1,34 +1,54 @@
-import { Vector2, Vector3, Raycaster } from 'three' ;
-import { 
-		Mesh,
-		BoxBufferGeometry, 
-		MeshBasicMaterial, 
-		MeshLambertMaterial,
-		MeshStandardMaterial,
-		TextureLoader,
-} from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { Color } from 'three';
+
+async function loadMarker() {
+		const loader = new GLTFLoader();
+
+		// asyncronosly load the model
+		const markerData = await loader.loadAsync('../../resources/marker/uxrzone_circle_floor/scene.gltf');
 
 
-function createMarker(position=null) {
+		const marker = markerData.scene;
 
-		const cubeGeo = new BoxBufferGeometry( 50, 50, 50 );
-		const cubeMaterial = new MeshLambertMaterial( 
-				{ 
-						color: 0xfeb74c, 
-						map: new TextureLoader()
-						.load( 'textures/square-outline-textured.png' ) 
-				} 
-		);
-		const marker = new Mesh( cubeGeo, cubeMaterial );
-		if(position){
-				marker.position.copy(position);
-				marker.position.divideScalar( 50 )
-						.floor()
-						.multiplyScalar( 50 )
-						.addScalar( 25 );
+		let x = 0, y = 0, z = 0; 
+
+		let scale = 100; // scale down 
+		marker.scale.set(scale, 0, scale);
+
+		marker.traverse( child => {
+				if( child.type === 'Points' ){
+						if( child.name == 'Object_2' ){
+								//console.log('child', child);
+								child.material.color = new Color('azure');
+						}
+						if( child.name == 'Object_3' ){
+								//console.log('child', child); // what is this?
+								// what does it do? who knows?
+								// try asking god...
+								child.material.color = new Color('pink');
+						}
+				}
+		});
+
+
+		// set up model
+		//const marker = setupModel(markerData);
+		marker.position.set(x, y, z);
+
+		marker.placeAt = pos => {
+				marker.position.set(pos.x, y, pos.z);
+				marker.visible = true;
 		}
-		return marker	
 
+		marker.hide = () => marker.visible = false;
+
+		console.log('marky-mark!', marker);
+		
+		marker['tick'] = () => {};
+
+		marker.visible = false;
+
+		return marker;
 }
 
-export { createMarker };
+export { loadMarker };
