@@ -35,24 +35,24 @@ class movement{
 				}
 		}
 
-		rotate = (delta, inputs) => {
+		rotate = (delta, keyboard) => {
 				this._rotation = 0;
 				let count = 0;
-				if(inputs.forward){
+				if(keyboard.forward){
 						this._rotation = +1;
 						count += 1;
 				}
-				if(inputs.backward){
+				if(keyboard.backward){
 						// look backward
-						if(inputs.forward || inputs.left) 
+						if(keyboard.forward || keyboard.left) 
 								this._rotation += 2;
 						count += 1;
 				}
-				if(inputs.left){
+				if(keyboard.left){
 						this._rotation += 1.5;
 						count += 1;
 				}
-				if(inputs.right){
+				if(keyboard.right){
 						this._rotation += 0.5;
 						count += 1;
 				}
@@ -66,8 +66,8 @@ class movement{
 		}
 
 		moveFoward = (speed=null)  => (delta, inputs=null) => {
-				inputs &&
-						this.rotate(delta, inputs);
+				if(inputs && inputs.checkKey())
+						this.rotate(delta, inputs.getKeyInputs());
 				speed = speed || this.speed;
 				this._velocity.setZ(speed);
 				this._velocity.setX(speed);

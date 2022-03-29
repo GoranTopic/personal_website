@@ -13,6 +13,7 @@ function setup_inputHandler(model){
 								//			 model is following the marker.
 								// Stop following.
 								model.vars.isFollowingMarker = false;
+								marker.hide()
 				}
 				// if thre is a click
 				if( thereIsClick(inputs) ){

@@ -3,23 +3,28 @@ import { movement } from '../../systems/movement/movement';
 
 function setup_model(model){
 
+		console.log('setting up player', model)
+		
 		// set up animations
 		const mixer = new AnimationMixer( model );
 		// get the actions to the actions
 		const actions = {};
 		// animation names
-		const animation_names = [ 'runningjump', 'runhold', 'walk', 'run', 'punch',
-				"clapping", "jump", "swimming", "idlehold", "death", "sitting", 
-				"swordslash", "idle", "standing" ]
-
+		// this is a lit off all the animations this model has 
+		const animation_names = [	"walk", "run", "idle_gun_shoot", "run_back",
+				"idle_gun_pointing", "idle_sword", "hitrecieve", "run_shoot", "kick_left",
+				"punch_right", "roll", "gun_shoot", "interact", "kick_right", "hitrecieve_2",
+				"punch_left", "idle", "run_left", "sword_slash", "idle_gun", "idle_neutral",
+				"run_right", "wave", "death"]
 		// then some dem magic
 		animation_names.forEach( name => 
 				model.animations.forEach( ani => 
-						ani.name.toLowerCase().match(".*_"+name+"$") && (
+						ani.name.toLowerCase().match(".*"+name+"$") && (
 								actions[name] = mixer.clipAction(ani)
 						)
 				)
 		);
+		console.log('actions:', actions)
 
 		// save mixer 
 		model.mixer = mixer;
@@ -46,6 +51,7 @@ function setup_model(model){
 		}
 
 
+		/*
 		// color the model 
 		model.traverse(
 				child => { // color me model 
@@ -67,9 +73,10 @@ function setup_model(model){
 								child.material.needsUpdate = true;
 						}
 				});
+		*/
 
 		/* scale n' tweaks */
-		let scale = 0.8; // scale down 
+		let scale = 1; // scale down 
 		model.scale.set(scale, scale, scale);
 
 		// set initial position 

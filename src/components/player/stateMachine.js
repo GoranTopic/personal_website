@@ -19,11 +19,11 @@ function setup_stateMachine(model){
 										return true;
 								else 
 										return false;
-						}else{		
-								if(hasKeyPress(inputs)){
-										if(hasArrowKeyPress(inputs))
-												return false;
-								}else return true
+						}else{
+								if(hasKeyPress(inputs))
+										return false;
+								else
+										return true
 						}
 				}
 
@@ -67,16 +67,30 @@ function setup_stateMachine(model){
 						}
 				}
 
+		// for waving 
+		const conditions_for_waving = () => {
+				if(hasKeyPress(inputs)){
+						let keys = inputs.getKeyInputs();
+						if(keys.space){
+								console.log('condition for wave is true');
+								return true;
+						}
+				}else{
+						return false
+				}
+		}
+
+
 
 		/* define idle state */
 		const idleState = new State({ 
 				name: 'idle', 
 				model: model, 
-				condition:  conditions_to_be_idle,
+				condition: conditions_to_be_idle,
 		});
 		idleState.setAnimation( actions['idle'] );
 		idleState.setEnterCallback( (curState, prevState) => {  
-				// get fwllowing as false
+				// get following as false
 				model.vars.isFollowingMarker = false;
 				// remove marker 
 				marker.hide();
@@ -131,7 +145,7 @@ function setup_stateMachine(model){
 		const runState = new State({ 
 				name: 'run', 
 				model: model, 
-				condition: 	conditions_to_be_running,
+				condition: conditions_to_be_running,
 		});
 		runState.setAnimation( actions['run'] );
 		runState.setMovement( mover.moveFoward(model.vars.runningSpeed) );
@@ -158,9 +172,37 @@ function setup_stateMachine(model){
 				model.vars.walkTimer = 0;
 		});
 
+		/* define wave state */
+		const waveState = new State({ 
+				name: 'wave', 
+				model: model, 
+				condition: conditions_for_waving,
+		});
+		waveState.setAnimation( actions['wave'] );
+		waveState.setEnterCallback( (curState, prevState) => {  
+				const waveAction = curState._animation;
+				if (prevState) {
+						const prevAction = prevState._animation;
+						waveAction.time = 0.0;
+						waveAction.enabled = true;
+						waveAction.setEffectiveTimeScale(1.0);
+						waveAction.setEffectiveWeight(1.0);
+						waveAction.crossFadeFrom(prevAction, 0.5, true);
+						waveAction.play();
+				} else {
+						waveAction.play();
+				}
+		});
+		waveState.setUpdateCallback( (delta, inputs, model, state) => {
+				console.log(state._animation.time)
+		});
+
+
 		/* state connections */
 		const stateConnnections = [
 				/*[ from -> to ] state*/
+				['idle', 'wave'],
+				['wave', 'idle'],
 				['idle', 'walk'],
 				['walk', 'idle'],
 				['walk', 'run' ],
@@ -174,7 +216,7 @@ function setup_stateMachine(model){
 		}
 
 		// states to process
-		const states = [ idleState, walkState, runState ]; 
+		const states = [ idleState, walkState, runState, waveState ]; 
 
 		// create state machine
 		const stateMachine = createFiniteStateMachine( 

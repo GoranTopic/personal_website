@@ -31,7 +31,7 @@ class State{
 				// check if it has the motion function
 				this._movement && this._movement(delta, inputs);
 				// at the end run the update callaback
-				this._update && this._update(delta, inputs, this._model);
+				this._update && this._update(delta, inputs, this._model, this);
 		}
 
 		/* save the input required to change
@@ -47,7 +47,7 @@ class State{
 				 since this is call by update() in the game loop it has to be fast */
 		checkStateConditions = (delta, inputs) => {
 				for(let state of this._targetStates ) // if condition matches
-						if(state.checkConditionOfEntry(inputs, delta))
+						if(state.checkConditionOfEntry(delta, inputs))
 								return state;
 				return null;
 		}
@@ -150,15 +150,15 @@ class FinateStateMachine {
 				}
 		}
 		
-		update = (delta, keyInputs, mouseInputs) =>  {
+		update = (delta, inputs) =>  {
 				// run globale update
-				this._update && this._update(delta, keyInputs, mouseInputs, this.model);
+				this._update && this._update(delta, inputs, this.model);
 				//console.log('this update', this._update);
 				// run the update function in each state
-				this._currentState.update(delta, keyInputs);
+				this._currentState.update(delta, inputs);
 				// check the condition of the inputs to determine wheter to move state
 				this.changeState(
-						this._currentState.checkStateConditions(delta, keyInputs)
+						this._currentState.checkStateConditions(delta, inputs)
 				);
 		}
 }

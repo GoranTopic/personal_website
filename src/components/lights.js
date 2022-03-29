@@ -10,17 +10,16 @@ import {
 
 function createLights() {
 		const lights = [];
-		
 
-		var ambientLight = new AmbientLight('white', 1);
-		//lights.push(ambientLight);
+		var ambientLight = new AmbientLight('white', 0.5);
+		lights.push(ambientLight);
 		
-		const hemiLight = new HemisphereLight( 0xffffff, 0x444444 );
+		const hemiLight = new HemisphereLight( 0xffffff, 0x444444, 1 );
 		hemiLight.position.set( 0, 200, 0 );
 		// add light
 		lights.push( hemiLight );
 
-		const dirLight = new DirectionalLight( 0xffffff );
+		const dirLight = new DirectionalLight( 0xffffff, 0.3 );
 		dirLight.position.set( 0, 200, 100 );
 		dirLight.castShadow = true;
 		dirLight.shadow.camera.top = 180;

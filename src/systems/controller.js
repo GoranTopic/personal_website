@@ -10,7 +10,7 @@ function addController(camera, renderer){
 		controls.tick = () =>{
 				if(player){
 						let { x, y, z } = player.position;
-						controls.target.set(x, y+150, z );
+						controls.target.set(x, y+80, z );
 				}
 				controls.update();
 		}

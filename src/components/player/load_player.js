@@ -21,7 +21,7 @@ async function loadPlayer(){
 		
 		// is the user clicks on the plane, this var has the position 
 		let data = await loader.loadAsync(
-				'../../../resources/Alien_Helmet.fbx'
+				'../../../resources/player_models/Individual Characters/FBX/Adventurer.fbx',
 		);
 		// make animation mixer
 		

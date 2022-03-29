@@ -1,22 +1,19 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { Color, TorusGeometry, Mesh, MeshLambertMaterial  } from 'three';
+import { Color, TorusGeometry, OctahedronGeometry, Mesh, Group, MeshLambertMaterial  } from 'three';
 
-async function loadMarker() {
+function loadMarker() {
 		const loader = new GLTFLoader();
 
-		// asyncronosly load the model
-		const markerData = await loader.loadAsync(
-				'../../resources/marker/uxrzone_circle_floor/scene.gltf'
-		);
+		const OctaRadius = 7;  // ui: radius
+		const octahrdron = new OctahedronGeometry(OctaRadius);
 
-
-		const radius = 7;  // ui: radius
-		const tubeRadius = .7;  // ui: tubeRadius
+		const torusRadius = 4;  // ui: radius
+		const tubeRadius = .4;  // ui: tubeRadius
 		const radialSegments = 3;  // ui: radialSegments
 		const tubularSegments = 18;  // ui: tubularSegments
 
 		const torus = new TorusGeometry(
-				radius, tubeRadius,
+				torusRadius, tubeRadius,
 				radialSegments, tubularSegments);
 
 		//const marker = markerData.scene;
@@ -29,8 +26,10 @@ async function loadMarker() {
 				flatShading: false,
 		});
 
-		// mesh
-		const marker = new Mesh(torus, material);
+		// creat octa mesh
+
+		// circulat bottom part
+		const circleMesh = new Mesh(torus, material);
 
 		// scale up
 		let scaleUpTo = 10; // scale up
@@ -38,11 +37,24 @@ async function loadMarker() {
 		let heightScale = 20;
 		// rotate
 		let rotation = Math.PI / 2;
-		marker.rotateX(rotation);
-		marker.scale.set(scale, scale, heightScale);
+		circleMesh.rotateX(rotation);
+		circleMesh.scale.set(1, 1, 1);
 		// location
-		let x = 0, y = 2, z = 0; 
-		marker.position.set(x, y, z);
+		let x = 0, y = 0.2, z = 0; 
+		circleMesh.position.set(x, y, z);
+
+		const octaMesh = new Mesh(octahrdron, material);
+		octaMesh.rotateZ(Math.PI/2)
+
+		octaMesh.scale.set(0.2, 0.1, 0.1);
+		octaMesh.position.set(x, y + 5, z);
+
+
+		// make marker group mesh
+		const marker = new Group();
+		marker.add(octaMesh)
+		marker.add(circleMesh)
+
 		// set if it place
 		marker.isPlaced = false;
 
@@ -67,13 +79,14 @@ async function loadMarker() {
 						if(marker.visible === false) marker.visible = true;
 						if(marker.scale.x < scaleUpTo){
 								scale += scaleUpSpeed;
-								marker.scale.set(scale, scale, heightScale);
+								console.log('scale', scale);
+								marker.scale.set(scale, heightScale, scale);
 						}
 				}else{
 						if(scale <= 0) marker.visible = false; 
 						else if(scale >= 0){ // scale down
 								scale -= scaleUpSpeed;
-								marker.scale.set(scale, scale, heightScale);
+								marker.scale.set(scale, heightScale, scale);
 						}
 						
 				}

@@ -4,7 +4,7 @@ import { createCamera } from '../components/camera';
 import { createScene } from '../components/scene';
 import { createLights } from '../components/lights';
 import { loadAstro } from '../components/astro';
-import { loadPlayer } from '../components/player';
+import { loadPlayer } from '../components/player/load_player';
 import { createPlane } from '../components/plane';
 import { createGrid } from '../components/grid';
 import { loadMarker } from '../components/marker';
@@ -19,7 +19,6 @@ import { Loop } from '../systems/Loop';
 import { addController } from '../systems/controller'
 import { createStats } from '../systems/stats'
 import { Resizer } from '../systems/Resizer';
-
 
 let camera, renderer, scene, loop, controller, plane, lights, grid, player, marker;
 
@@ -56,6 +55,11 @@ class World {
 				// add controller
 				loop.add( controller )
 
+				// load the mouse marker 
+				marker = loadMarker();
+				scene.add(marker);
+				loop.add(marker);
+
 				// add stats
 				const stats = createStats();
 				container.appendChild( stats.dom );
@@ -66,12 +70,9 @@ class World {
 		async init() { // load async objects
 
 				player = await loadPlayer();
+				console.log('player', player);
 				scene.add(player);
 				loop.add(player);
-				
-				marker = await loadMarker();
-				scene.add(marker);
-				loop.add(marker);
 
 		}
 		
