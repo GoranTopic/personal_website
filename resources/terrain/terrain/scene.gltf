@@ -1,0 +1,522 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 24168,
+      "max": [
+        1.0,
+        1.0143200159072876,
+        0.19822999835014343
+      ],
+      "min": [
+        -1.0,
+        -1.0,
+        -0.13784000277519226
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 290016,
+      "componentType": 5126,
+      "count": 24168,
+      "max": [
+        0.961873471736908,
+        0.9619947075843811,
+        1.0
+      ],
+      "min": [
+        -0.9544131755828857,
+        -0.9629167914390564,
+        0.1818196326494217
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 24168,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 580032,
+      "componentType": 5126,
+      "count": 7362,
+      "max": [
+        0.9220799803733826,
+        0.8702399730682373,
+        0.09686999768018723
+      ],
+      "min": [
+        -0.7922099828720093,
+        -0.8441600203514099,
+        -0.12773999571800232
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 668376,
+      "componentType": 5126,
+      "count": 7362,
+      "max": [
+        0.9297332167625427,
+        0.8968938589096069,
+        0.9999833106994629
+      ],
+      "min": [
+        -0.9125461578369141,
+        -0.9301525354385376,
+        0.2875611186027527
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 96672,
+      "componentType": 5125,
+      "count": 7362,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 756720,
+      "componentType": 5126,
+      "count": 4044,
+      "max": [
+        1.0,
+        1.0149400234222412,
+        0.22311000525951385
+      ],
+      "min": [
+        -1.0,
+        -1.0011999607086182,
+        -0.01590000092983246
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 805248,
+      "componentType": 5126,
+      "count": 4044,
+      "max": [
+        0.9457834959030151,
+        0.954150915145874,
+        0.9999126195907593
+      ],
+      "min": [
+        -0.920543372631073,
+        -0.9004502296447754,
+        0.2855497896671295
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 126120,
+      "componentType": 5125,
+      "count": 4044,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 853776,
+      "componentType": 5126,
+      "count": 24168,
+      "max": [
+        1.0,
+        1.0143200159072876,
+        0.19822999835014343
+      ],
+      "min": [
+        -1.0,
+        -1.0,
+        -0.13784000277519226
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1143792,
+      "componentType": 5126,
+      "count": 24168,
+      "max": [
+        0.961873471736908,
+        0.9619947075843811,
+        1.0
+      ],
+      "min": [
+        -0.9544131755828857,
+        -0.9629167914390564,
+        0.1818196326494217
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 142296,
+      "componentType": 5125,
+      "count": 24168,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1433808,
+      "componentType": 5126,
+      "count": 7362,
+      "max": [
+        0.9220799803733826,
+        0.8702399730682373,
+        0.09686999768018723
+      ],
+      "min": [
+        -0.7922099828720093,
+        -0.8441600203514099,
+        -0.12773999571800232
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1522152,
+      "componentType": 5126,
+      "count": 7362,
+      "max": [
+        0.9297332167625427,
+        0.8968938589096069,
+        0.9999833106994629
+      ],
+      "min": [
+        -0.9125461578369141,
+        -0.9301525354385376,
+        0.2875611186027527
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 238968,
+      "componentType": 5125,
+      "count": 7362,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1610496,
+      "componentType": 5126,
+      "count": 4044,
+      "max": [
+        1.0,
+        1.0149400234222412,
+        0.22311000525951385
+      ],
+      "min": [
+        -1.0,
+        -1.0011999607086182,
+        -0.01590000092983246
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1659024,
+      "componentType": 5126,
+      "count": 4044,
+      "max": [
+        0.9457834959030151,
+        0.954150915145874,
+        0.9999126195907593
+      ],
+      "min": [
+        -0.920543372631073,
+        -0.9004502296447754,
+        0.2855497896671295
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 268416,
+      "componentType": 5125,
+      "count": 4044,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "riko721 (https://sketchfab.com/riko721)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/terrain-da124c4dad764edbbcb3d02fae3ece73",
+      "title": "Terrain"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 284592,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1707552,
+      "byteOffset": 284592,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1992144,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "material",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.423267662525177,
+          0.15292617678642273,
+          0.038204375654459,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Herbe",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.24620139598846436,
+          0.3762621283531189,
+          0.03433981165289879,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Neige",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Terrain_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Terrain_1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 4,
+            "POSITION": 3
+          },
+          "indices": 5,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Terrain_2",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 6
+          },
+          "indices": 8,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "UCX_Terrain_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 10,
+            "POSITION": 9
+          },
+          "indices": 11,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "UCX_Terrain_1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 12
+          },
+          "indices": 14,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "UCX_Terrain_2",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 16,
+            "POSITION": 15
+          },
+          "indices": 17,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2,
+        6
+      ],
+      "name": "Root"
+    },
+    {
+      "children": [
+        3,
+        4,
+        5
+      ],
+      "matrix": [
+        50.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        50.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        50.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Terrain"
+    },
+    {
+      "mesh": 0,
+      "name": "Terrain_0"
+    },
+    {
+      "mesh": 1,
+      "name": "Terrain_1"
+    },
+    {
+      "mesh": 2,
+      "name": "Terrain_2"
+    },
+    {
+      "children": [
+        7,
+        8,
+        9
+      ],
+      "matrix": [
+        50.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        50.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        50.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "UCX_Terrain"
+    },
+    {
+      "mesh": 3,
+      "name": "UCX_Terrain_0"
+    },
+    {
+      "mesh": 4,
+      "name": "UCX_Terrain_1"
+    },
+    {
+      "mesh": 5,
+      "name": "UCX_Terrain_2"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
