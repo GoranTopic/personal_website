@@ -1,5 +1,5 @@
 import { Vector3, Quaternion } from 'three';
-import { camera }  from '../../world/world';
+import { camera, }  from '../../world/world';
 
 class movement{
 		/* this class controls the movment vectors of a oject 
@@ -14,6 +14,7 @@ class movement{
 				this._rotation = 0;
 				this._acc = 0;
 		}
+
 
 		setAcceleration = acc => 
 				/* set the reservation */

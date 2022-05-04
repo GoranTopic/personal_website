@@ -4,6 +4,7 @@ import { createCamera } from '../components/camera';
 import { createScene } from '../components/scene';
 import { createLights } from '../components/lights';
 import { loadAstro } from '../components/astro';
+import { loadPolaroid } from '../components/polaroid';
 import { loadPlayer } from '../components/player/load_player';
 import { loadTerrain } from '../components/terrain';
 import { createPlane } from '../components/plane';
@@ -12,7 +13,6 @@ import { loadMarker } from '../components/marker';
 //import { createMeshGroup } from '../components/meshGroup';
 //import { loadDancerDude } from '../components/dancerDude'; 
 //import { loadBirds } from '../components/birds/birds';
-import { loadSambaDancer } from '../components/sambaDancer'; 
 
 import { createRenderer } from '../systems/renderer';
 import { Loop } from '../systems/Loop';
@@ -21,7 +21,7 @@ import { addController } from '../systems/controller'
 import { createStats } from '../systems/stats'
 import { Resizer } from '../systems/Resizer';
 
-let camera, renderer, scene, loop, controller, plane, lights, grid, player, terrain, marker;
+let camera, renderer, scene, loop, controller, plane, lights, grid, player, marker;
 
 
 class World {
@@ -46,7 +46,7 @@ class World {
 				// add cube to scene 
 				scene.add( 
 						...lights,
-						//plane, 
+						plane, 
 						grid,
 				);
 				// add controller			
@@ -54,7 +54,10 @@ class World {
 
 				// add to animation loop
 				// add controller
-				loop.add( controller )
+				loop.add( 
+						controller, 
+						plane,
+				)
 
 				// load the mouse marker 
 				marker = loadMarker();
@@ -74,9 +77,10 @@ class World {
 				scene.add(player);
 				loop.add(player);
 
-				terrain =  await loadTerrain();
-				console.log('terrain', terrain);
-				scene.add(terrain);
+				//terrain = await loadTerrain();
+				//console.log('terrain', terrain);
+				//scene.add(terrain);
+				
 
 		}
 		
