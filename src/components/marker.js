@@ -49,7 +49,6 @@ function loadMarker() {
 		octaMesh.scale.set(0.2, 0.1, 0.1);
 		octaMesh.position.set(x, y + 5, z);
 
-
 		// make marker group mesh
 		const marker = new Group();
 		marker.add(octaMesh)
@@ -72,7 +71,7 @@ function loadMarker() {
 
 		//console.log('marky-mark!', marker);
 		
-		let scaleUpSpeed = 0.6;
+		let scaleUpSpeed = 0.2;
 		marker.tick = () => {
 				// animate scaling up and down
 				if(marker.isPlaced){
