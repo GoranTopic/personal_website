@@ -1,0 +1,7 @@
+export default defineConfig({
+    plugins: [ vue(), ],
+    server: {
+        // Add the following in the file
+        host: '0.0.0.0'
+    }
+})

@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^2.8.0"
+    "vite": "^2.9.8"
   },
   "dependencies": {
     "ammojs": "^0.0.2",
-    "three": "^0.138.0"
+    "three": "^0.138.3"
   }
 }
